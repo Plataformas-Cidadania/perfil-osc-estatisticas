@@ -1,0 +1,41 @@
+--- 
+title: "O Perfil das Organizações Da Sociedade Civil no Brasil (2016-2025)"
+author: "Instituto de Pesquisa Econômica Aplicada"
+date: "`r Sys.Date()`"
+lang: "pt-br"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "Relatório Quantitativo do sobre o Mapa das Organizações da Sociedade Civil do Brasil. IPEA - Governo Federal."
+always_allow_html: yes
+---
+
+# Apresentação {#cap-apresentacao}
+
+
+Este relatório de pesquisa é o resultado da quarta ação prevista no plano de trabalho definido na parceria entre o Instituto de Pesquisa Econômica Aplicada - Ipea  e a Secretaria Geral da Presidência da República - SGPR (processo 03001.003291/2023-71). O relatório atualiza os dados sobre o perfil das Organizações da Sociedade Civil - OSCs brasileiras e subsidiará análises futuras mais detalhadas, a serem realizadas pelo Ipea e, desejavelmente, pela comunidade de pesquisadores do tema.
+
+A organização temática deste relatório e os dados apresentados se inspiram na publicação O Perfil das Organizações da Sociedade Civil no Brasil, editada em 2018 pelo Ipea.
+
+O documento oferece tabulações abrangentes sobre OSCs no país no ano de 2024 ou, quando possível, com dados longitudinais. Esses dados decorrem da integração de quase duas dezenas de bases sobre as OSCs,conforme exposto na seção ‘metodologia’.
+Após apresentar a metodologia empregada para integrar os dados que alimentam as análises, o relatório se organiza da seguinte forma: apresenta a distribuição das OSCs no território, por regiões e UFs. As informações disponibilizadas poderão ser complementadas, no nível municipal, pelo Mapa das OSCs (https://mapaosc.ipea.gov.br/mapa), onde é possível ter uma descrição do perfil básico das OSCs em cada cidade brasileira .
+
+Em seguida, apresentam-se as tabulações e os dados das OSCs dispostas por áreas de atuação. Nesta seção, conforme detalhamento explicitado pela seção “metodologia”, utilizam-se os dados produzidos com base no sistema de classificação implementado pelo Mapa das OSCs, a partir da integração das informações fornecidas por diferentes bases coletadas no Mapa..
+
+A seção seguinte apresenta a distribuição das OSCs por diferentes naturezas jurídicas: fundações, associações privadas, organizações religiosas e organizações sociais. As informações são dispostas para representar a distribuição das organizações por regiões e estados, bem como por diferentes finalidades de atuação.
+
+A seção ‘Mercado de trabalho das OSCs’ registra tabulações sobre mais de 2,5 milhões de vínculos de trabalho formais em OSCs (2024). Para tanto, traz informações disponibilizadas na Relação Anual de Informações Sociais (RAIS). Os dados estão tabulados por regiões e UFs, finalidades de atuação, faixa etária, sexo e cor. Inclui, ainda, dados sobre pessoas com deficiência com vínculos de trabalho nas OSCs.
+
+De modo complementar, a seção “Porte das OSCs” apresenta a distribuição das organizações a partir do número de vínculos formais de trabalho e demais características associadas. Os dados tabulados ressaltam um dos aspectos mais notáveis deste conjunto de Organizações: mais de 80% delas não possuem vínculos formais de trabalho.
+A seção subsequente (‘Escolaridade do Pessoal Ocupado’) apresenta informações sobre os níveis de escolaridade do pessoal empregado nas OSCs, novamente com dados provenientes da RAIS.
+
+O relatório apresenta ainda dados sobre a remuneração do pessoal empregado nas OSCs, com recortes variados por regiões, UFs e finalidades de atuação.
+
+Por fim, são apresentadas informações sobre transferências da União para o financiamento de projetos a serem implementados pelas OSCs em todo o território nacional. 
+
+
+

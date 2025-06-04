@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-br" xml:lang="pt-br">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Capítulo 3 Metodologia | O Perfil das Organizações Da Sociedade Civil no Brasil (2016-2025)</title>
+  <meta name="description" content="Relatório Quantitativo do sobre o Mapa das Organizações da Sociedade Civil do Brasil. IPEA - Governo Federal." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Capítulo 3 Metodologia | O Perfil das Organizações Da Sociedade Civil no Brasil (2016-2025)" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Relatório Quantitativo do sobre o Mapa das Organizações da Sociedade Civil do Brasil. IPEA - Governo Federal." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Capítulo 3 Metodologia | O Perfil das Organizações Da Sociedade Civil no Brasil (2016-2025)" />
+  
+  <meta name="twitter:description" content="Relatório Quantitativo do sobre o Mapa das Organizações da Sociedade Civil do Brasil. IPEA - Governo Federal." />
+  
+
+<meta name="author" content="Instituto de Pesquisa Econômica Aplicada" />
+
+
+<meta name="date" content="2025-06-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="cap-intro.html"/>
+<link rel="next" href="cap-territorio.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Relatório MOSC 2025</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Apresentação</a></li>
+<li class="chapter" data-level="2" data-path="cap-intro.html"><a href="cap-intro.html"><i class="fa fa-check"></i><b>2</b> Introdução</a></li>
+<li class="chapter" data-level="3" data-path="cap-metodologia.html"><a href="cap-metodologia.html"><i class="fa fa-check"></i><b>3</b> Metodologia</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="02-metodologia.html"><a href="#fonte-de-dados-e-metodologia-de-identifica%C3%A7%C3%A3o-das-oscs"><i class="fa fa-check"></i><b>3.1</b> Fonte de Dados e Metodologia de Identificação das OSCs</a></li>
+<li class="chapter" data-level="3.2" data-path="02-metodologia.html"><a href="#o-algoritmo-de-identifica%C3%A7%C3%A3o-das-oscs"><i class="fa fa-check"></i><b>3.2</b> O Algoritmo de Identificação das OSCs</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="cap-territorio.html"><a href="cap-territorio.html"><i class="fa fa-check"></i><b>4</b> As OSCs no Território</a></li>
+<li class="chapter" data-level="5" data-path="cap-area-atuacao.html"><a href="cap-area-atuacao.html"><i class="fa fa-check"></i><b>5</b> Área de Atuação das OSCs</a></li>
+<li class="chapter" data-level="6" data-path="cap-natjur.html"><a href="cap-natjur.html"><i class="fa fa-check"></i><b>6</b> Natureza Jurídica das OSCs</a></li>
+<li class="chapter" data-level="7" data-path="cap-mercadotrab.html"><a href="cap-mercadotrab.html"><i class="fa fa-check"></i><b>7</b> Mercado de Trabalho das OSCs</a></li>
+<li class="chapter" data-level="8" data-path="cap-porteosc.html"><a href="cap-porteosc.html"><i class="fa fa-check"></i><b>8</b> Porte das OSCs</a></li>
+<li class="chapter" data-level="9" data-path="cap-escolaridadetrab.html"><a href="cap-escolaridadetrab.html"><i class="fa fa-check"></i><b>9</b> Escolaridade do Pessoal Ocupado</a></li>
+<li class="chapter" data-level="10" data-path="cap-remuneracao.html"><a href="cap-remuneracao.html"><i class="fa fa-check"></i><b>10</b> Remuneração do Pessoal Ocupado</a></li>
+<li class="chapter" data-level="11" data-path="cap-transferenciasosc.html"><a href="cap-transferenciasosc.html"><i class="fa fa-check"></i><b>11</b> Transferências de Recursos Públicos</a></li>
+<li class="chapter" data-level="12" data-path="cap-evolucaoquanti.html"><a href="cap-evolucaoquanti.html"><i class="fa fa-check"></i><b>12</b> Evolução Quantitativa das OSC</a></li>
+<li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">O Perfil das Organizações Da Sociedade Civil no Brasil (2016-2025)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="cap-metodologia" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Capítulo 3</span> Metodologia<a href="cap-metodologia.html#cap-metodologia" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="fonte-de-dados-e-metodologia-de-identificação-das-oscs" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Fonte de Dados e Metodologia de Identificação das OSCs<a href="#fonte-de-dados-e-metodologia-de-identifica%C3%A7%C3%A3o-das-oscs" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Fonte de Dados e Metodologia de Identificação das OSCs
+O Mapa das Organizações da Sociedade Civil - MOSC, apesar de ter múltiplas fontes de dados de origem, tem sua principal fonte de informações nos dados públicos do Cadastro Nacional de Pessoa Jurídica -CNPJgerido pela Receita Federal do Brasil -RFB. Este Cadastro é publicado desde 2017, e contém registros de todas as organizações domiciliadas no Brasil e seus estabelecimentos no exterior. Segundo Andrade e Pereira:</p>
+<blockquote>
+<p>A base do CNPJ é uma fonte de informação mantida pela SRFB do tipo estoque, em que, continuamente, são armazenadas características sobre entidades e estabelecimentos filiais, inscritos no cadastro de mesmo nome. Nele constam os estabelecimentos com inscrição ativa ou não, correspondendo a todas as entidades domiciliadas no Brasil e seus estabelecimentos domiciliados no exterior, inclusive as pessoas jurídicas equiparadas pela legislação do imposto sobre a renda estão obrigadas a se inscrever no CNPJ (BRASIL, 2018). A divulgação da base detalhada do CNPJ, incluindo o número identificador do CNPJ de cada organização, é realizada trimestralmente pela SRFB, em que informações, como natureza jurídica, nome fantasia, razão social, situação cadastral, município, endereço, telefone e nomes dos sócios, são disponibilizadas (ANDRADE; PEREIRA, 2019, p. 11).</p>
+</blockquote>
+<p>As OSCs são um subconjunto do grupo de natureza jurídica código “3” — Entidades Sem Fins Lucrativos (ESFL). Elas possuem características específicas que as distinguem das demais entidades desse grupo. De acordo com a Lei nº 13.204/2015, uma OSC corresponde a:</p>
+<blockquote>
+<ol style="list-style-type: lower-alpha">
+<li>entidade privada sem fins lucrativos que não distribua entre os seus sócios ou associados, conselheiros, diretores, empregados, doadores ou terceiros eventuais resultados, sobras, excedentes operacionais, brutos ou líquidos, dividendos, isenções de qualquer natureza, participações ou parcelas do seu patrimônio, auferidos mediante o exercício de suas atividades, e que os aplique integralmente na consecução do respectivo objeto social, de forma imediata ou por meio da constituição de fundo patrimonial ou fundo de reserva;</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol style="list-style-type: lower-alpha">
+<li>as sociedades cooperativas previstas na Lei nº 9.867, de 10 de novembro de 1999; as integradas por pessoas em situação de risco ou vulnerabilidade pessoal ou social; as alcançadas por programas e ações de combate à pobreza e de geração de trabalho e renda; as voltadas para fomento, educação e capacitação de trabalhadores rurais ou capacitação de agentes de assistência técnica e extensão rural; e as capacitadas para execução de atividades ou de projetos de interesse público e de cunho social; e</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>as organizações religiosas que se dediquem a atividades ou a projetos de interesse público e de cunho social distintas das destinadas a fins exclusivamente religiosos (BRASIL, 2015)</li>
+</ol>
+</blockquote>
+<p>Com relação ao último ponto, é preciso deixar claro que o Mapa não exclui nenhuma organização religiosa. Diferentemente da Lei 13.204/2015, o Mapa não considera OSCs apenas as organizações “que se dediquem a atividades ou projetos de interesse público ou de cunho social distintos das destinadas a fins exclusivamente religiosos”. Isso ocorre porque, atualmente, não há meios de distinguir as organizações religiosas que realizam atividades sociais daquelas dedicadas apenas ao culto.</p>
+<p>Dessa forma, as OSCs são entidades que desempenham papel e possuem características específicas:privadas, sem fins de lucro, legalmente constituídas, autoadministradas e voluntárias. A ONU enumera cinco características, que são utilizadas para identificar estas entidades (UN, 2003):</p>
+<ol style="list-style-type: decimal">
+<li>Privadas, não integrantes, portanto, do aparelho de Estado.</li>
+<li>Sem fins lucrativos, isto é, organizações que não distribuem eventuais excedentes entre os proprietários ou diretores e que não possuem como razão primeira de existência a geração de lucros – podendo até gerá-los, desde que aplicados nas atividades fins.</li>
+<li>Institucionalizadas, isto é, legalmente constituídas.</li>
+<li>Autoadministradas ou capazes de gerenciar suas próprias atividades.</li>
+<li>Voluntárias, na medida em que podem ser constituídas livremente por qualquer grupo de pessoas, isto é, a atividade de associação ou de fundação da entidade é livremente decidida pelos sócios ou fundadores.</li>
+</ol>
+<p>Tendo em vista esses critérios, grande parte das naturezas jurídicas do grupo de ESFL podem ser descartadas, restando apenas algumas categorias aderentes às especificações. O MOSC, desde sua primeira edição, considera como elegíveis a serem OSCs as entidades com os seguintes códigos de natureza jurídica: associações privadas (código 399-9), fundações privadas (código 306- 9), organizações religiosas (código 322-0) e organizações sociais -OS (código 330-1) (LOPEZ, 2018). Lopez ressalta que a Lei nº 13.019/2014, ao conceituar OSCs, adiciona às pessoas jurídicas de direito privado sem fins lucrativos as denominadas cooperativas sociais e as sociedades cooperativas integradas por trabalhadores em situação social vulnerável, fomento e capacitação de trabalhadores rurais ou ações de cunho social.</p>
+<blockquote>
+<p>As Associações Privadas, segundo a Tabela de Natureza Jurídica de 2018, foram previstas nos arts. 53 a 61 da Lei nº 10.406, de 10 de janeiro de 2002, do Código Civil (Brasil, 2002). Esta natureza jurídica compreende: as associações profissionais ou de classe; os fundos de pensão; as organizações não governamentais; os fundos garantidores de créditos; os consórcios públicos de direito privado; as organizações da sociedade civil de interesse público (Oscips); as unidades executoras do Programa Dinheiro Direto na Escola; as organizações indígenas; e as associações criadas pelos partidos políticos, quando estas se constituírem sob a forma de associação. As Fundações Privadas referem-se às fundações criadas pela iniciativa dos particulares e as fundações instituídas pela livre iniciativa de particulares, pessoas físicas e/ou pessoas jurídicas, regidas inteiramente pelo direito privado, previstas nos arts. 44 (inciso III), 62 a 69 da Lei nº 10.406, de 10 de janeiro de 2002, do Código Civil (Brasil, 2002). Adicionalmente, esta natureza jurídica compreende, também, os estabelecimentos quando constituídos sob a forma de fundação privada: os fundos de pensão; as Oscips; as organizações não governamentais e as fundações instituídas pelos partidos políticos. A natureza jurídica Organizações Religiosas refere-se às entidades religiosas, com base legal no art. 2º da Lei nº 10.825, de 22 de dezembro de 2003 (Brasil, 2003). Já as Organizações Sociais diz respeito às pessoas jurídicas de direito privado, sem fins lucrativos, desde que tenham sido qualificadas como organização social nos termos da Lei Federal nº 9.637, de 15 de maio de 1998 (Brasil, 1998), ou de lei estadual, ou distrital ou municipal. Nesse sentido, as OS constituem-se como uma outorga (ANDRADE; PEREIRA, 2019, p. 10)</p>
+</blockquote>
+<p>Dentro desses quatro grupos, apenas algumas entidades se enquadram nos cinco critérios da ONU empregados pelo Mapa das OSCs, em especial sobre suas finalidades de atuação e a autoadministração. De acordo com o IBGE (2019), as entidades que devem ser desconsideradas, são:</p>
+<blockquote>
+<p>Caixas escolares: não são privadas;
+Partidos políticos: não são voluntários;
+Sindicatos, federações e confederações: não são voluntários;
+Condomínios: não são voluntários;
+Cartórios: não são privados, auto administrados e voluntários;
+Sistema S: não são voluntários;
+Entidades de mediação e arbitragem: são lucrativas;
+Comissões de conciliação prévia: não são voluntários;
+Conselhos, fundos e consórcios municipais: não são privadas;
+Cemitérios e funerárias: não são privadas, sem fins lucrativos e voluntárias.</p>
+</blockquote>
+<p>(IBGE, 2019, p. 15);</p>
+<p>Também são excluídas as entidades que apesar de possuírem naturezas jurídicas específicas, estão erroneamente inscritas nas quatro naturezas jurídicas mencionadas e não possuem características de OSCs alinhadas com o princípios da ONU supramencionados: sistema S (307-7); condomínios (308-5 e 331-0); entidades sindicais (313-1); órgãos vinculados a partidos políticos (325-5, 326- 3 e 327-1); e cartórios (303-4).</p>
+<p>Ao considerar tudo que foi mencionado, construiu-se um algoritmo de seleção de OSCs, que será detalhado na próxima seção. Ele consiste, basicamente, na aplicação de filtros em variáveis específicas, aliado a técnicas de mineração de texto, bem como controle sobre as atividades econômicas selecionadas. Adicionalmente ao resultado obtido no algoritmo de seleção, foram incluídas as Oscips , listadas pelo CNPJ, a partir da base de dados do Sistema Oscip, do Ministério da Justiça, que por ventura não puderam ser identificadas no algoritmo de identificação de OSCs.</p>
+</div>
+<div id="o-algoritmo-de-identificação-das-oscs" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> O Algoritmo de Identificação das OSCs<a href="#o-algoritmo-de-identifica%C3%A7%C3%A3o-das-oscs" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Esta seção retoma o que foi apresentado por Andrade e Pereira (2019) na edição anterior da publicação “Por dentro do mapa das OSC” e apresenta os aprimoramentos que foram realizados no algoritmo de identificação de OSCs. São apresentados os totais de entidades, comparando com a edição anterior e especificidades que foram identificadas nessa atualização do MOSC.</p>
+<p>Os dados utilizados nessa edição do MOSC se referem última atualização do Mapa (fevereiro de 2025) e, conforme realizado anteriormente, a identificação de OSCs utiliza as seguintes variáveis: CNPJ, razão social, nome fantasia, situação cadastral, natureza jurídica e Classificação Nacional de Atividades Econômicas (CNAE) (ANDRADE; PEREIRA, 2019). Primeiro são selecionadas empresas com naturezas jurídicas elegíveis a serem OSCs (associações privadas, fundações privadas, organizações religiosas e organizações sociais); depois, o algoritmo é utilizado para identificar as empresas que são OSCs; na sequência, são identificadas as OSCs ativas; e, por fim, são inseridas Oscips que por ventura não foram identificadas pelo algoritmo, finalizando identificação de OSCs que estarão presentes no cadastro do MOSC.</p>
+<p>O algoritmo de identificação de OSCs operacionaliza o que foi apresentado na seção anterior por meio da linguagem de programação R, utilizando mineração de texto nos campos de razão social, nome fantasia e atividade econômica. Nesta edição, foram realizados aprimoramentos nas palavras utilizadas na mineração de texto para melhorar a seleção de OSCs. A figura 2 exibe um fluxograma descrevendo as etapas desse algoritmo.</p>
+<p>As informações divulgadas nos microdados do CNPJ pela RFB correspondem à última data em que a empresa fez alguma atualização cadastral. Portanto, o histórico de atualizações das empresas ou estabelecimentos não é divulgado.</p>
+<p>Após a identificação de OSCs, foram selecionadas apenas as organizações com situação cadastral que consideramos elegíveis para estar no Mapa: ativas, suspensas ou inaptas. São excluídas as organizações com situação cadastral “nula” ou “baixada”. A descrição das situações cadastrais se encontra abaixo (Brasil, 2018).
+Ativa (código 02): a inscrição no CNPJ é considerada ativa quando a entidade ou o estabelecimento filial não se enquadrar em nenhuma das outras situações cadastrais listadas a seguir.</p>
+<ol style="list-style-type: decimal">
+<li><em>Suspensa</em> (código 03): quando a entidade ou o estabelecimento filial se enquadrar em alguns casos específicos, como: não cumprir com as obrigações previstas ou apresentar inconsistências cadastrais; estar em processo de baixa de sua inscrição no CNPJ; apresentar indício de interposição fraudulenta de sócio ou titular; declarar a interrupção temporária de suas atividades; por ordem judicial etc. Neste caso, apesar de a entidade estar suspensa, seu CNPJ não é desativado.</li>
+<li><em>Inapta</em> (código 04): são consideradas inaptas as organizações que, por dois exercícios consecutivos, omitem as declarações e demonstrativos pertencentes a uma série de documentos cadastrais; não for localizada no endereço cadastrado no CNPJ; e tiverem irregularidades em operações de comércio exterior. Dessa forma, apesar de a entidade ficar inapta, seu CNPJ não é desativado.</li>
+<li><em>Baixada</em> (código 08): quando a organização opta por dar baixa no seu CNPJ, podendo ter sua inscrição restabelecida no futuro. Assim, ela fica inativa no período em que seu CNPJ estiver baixado.</li>
+<li><em>Nula</em> (código 01): quando for declarada a nulidade do ato de inscrição do CNPJ, no caso de haver mais de um número, para o mesmo estabelecimento; for constatado vício no ato cadastral ou quando se enquadrar em casos específicos em que não é obrigatório se cadastrar no CNPJ. Desse modo, este CNPJ é cancelado.</li>
+</ol>
+<p>O Mapa das OSCs, ao incluir as organizações inaptas ou suspensas, privilegiou manter CNPJs que talvez pudessem ser excluídos. Entretanto, as organizações em ambas as situações, em tese, podem ainda operar ou regularizar sua situação. As pessoas que explorarem as bases de dados do Mapa das OSCs poderão avaliar a pertinência ou a conveniência de não incluir estas situações cadastrais, bastando para tal excluí-las das bases de microdados.</p>
+<p>Abaixo está o Fluxograma de todo o processo de atualização do Mapa das OSC</p>
+<p><em>Figura 3.1 – Fluxograma da construção da base de dados do Mapa das OSCs, versão 2021</em>
+<img src="figures/DiagramaAtualizacao21.png" width="80%" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="cap-intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="cap-territorio.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/02-metodologia.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["relatorio-estatistico-MOSC-2025.word", "relatorio-estatistico-MOSC-2025.pdf", "relatorio-estatistico-MOSC-2025.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,777 @@
+# Evolução Quantitativa das OSC {#cap-evolucaoquanti}
+
+```{r setup cap evolucaoquanti, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+```
+
+**Gráficos e Tabelas**
+
+&nbsp;
+
+*Tabela 12.1 - Evolução Quantitativa das OSC* 
+
+```{r table QtdAno_OSC, echo=FALSE, warning=FALSE}
+
+QtdAno_OSC <- readRDS("tables/QtdAno_OSC.RDS")
+
+# Formata tabela:
+QtdAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Aberturas, Fechamentos, DataRef)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    Ano = "Ano",
+    N_OSC = "Número de OSCs",
+    Crescimento = "Crescimento (%)"
+  ) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    columns = Crescimento,
+    missing_text = "-"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(N_OSC),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Crescimento),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !Ano )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+rm(QtdAno_OSC)
+
+
+```
+
+
+&nbsp;
+
+*Tabela 12.2 - OSCs por faixas de ano de criação* 
+
+```{r table FaixaFundacao_OSC, echo=FALSE, warning=FALSE}
+
+FaixaFundacao_OSC <- readRDS("tables/FaixaFundacao_OSC.RDS")
+
+# Formata tabela:
+FaixaFundacao_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Ordem)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    FaixaAnoFund = "Faixas de ano de criação",
+    Freq = "Total",
+    Per = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(Freq),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Per),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !FaixaAnoFund )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "OSCs",
+    columns = c(Freq, Per)
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(FaixaFundacao_OSC)
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 12.1 - OSCs por faixas de ano de criação* 
+
+
+```{r plot FaixaFundacao_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+FaixaFundacao_OSC <- readRDS("tables/FaixaFundacao_OSC.RDS")
+
+# Gráfico
+FaixaFundacao_OSC %>%
+  mutate(FaixaAnoFund2 = ifelse(str_sub(FaixaAnoFund, 1, 2) == "20",
+                                "De 2011 a 2022", FaixaAnoFund) ) %>%
+  group_by(FaixaAnoFund2) %>%
+  summarise(Per = sum(Per, na.rm = TRUE)) %>%
+  ggplot(aes(x = "",y = Per, fill = FaixaAnoFund2)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start=0) +
+
+  geom_text(aes(x = 1.65, label=percent(Per / 100, 1)),
+            position = position_stack(vjust=0.5)) +
+
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    legend.title = element_blank(),
+    panel.border = element_blank(),
+    panel.grid=element_blank(),
+    axis.ticks = element_blank(),
+    legend.position="bottom",
+    axis.text.x=element_blank()
+  )
+
+rm(FaixaFundacao_OSC)
+
+
+
+```
+
+&nbsp;
+
+*Tabela 12.3 - Crescimento OSC por região* 
+
+```{r table QtdAnoReg_OSC, echo=FALSE, warning=FALSE}
+
+QtdAnoReg_OSC <- readRDS("tables/QtdAnoReg_OSC.RDS")
+
+# Formata tabela:
+QtdAnoReg_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Oculta algumas colunas
+  cols_hide(c(Per_N, Per_NE, Per_SE, Per_S, Per_CO)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    Ano = "Ano",
+    N_OSC = "N",
+    Crescimento = "(%)",
+    N_OSC_N = "N",
+    Crescimento_N = "(%)",
+    N_OSC_NE = "N",
+    Crescimento_NE = "(%)",
+    N_OSC_SE = "N",
+    Crescimento_SE = "(%)",
+    N_OSC_S = "N",
+    Crescimento_S = "(%)",
+    N_OSC_CO = "N",
+    Crescimento_CO = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(N_OSC, N_OSC_N, N_OSC_NE, N_OSC_SE, N_OSC_S, N_OSC_CO),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Crescimento, Crescimento_N, Crescimento_NE, Crescimento_SE,
+                Crescimento_S, Crescimento_CO),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !Ano )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Brasil",
+    columns = c(N_OSC, Crescimento)
+  ) %>%
+
+  tab_spanner(
+    label = "Norte",
+    columns = c(N_OSC_N, Crescimento_N)
+  ) %>%
+
+  tab_spanner(
+    label = "Nordeste",
+    columns = c(N_OSC_NE, Crescimento_NE)
+  ) %>%
+
+  tab_spanner(
+    label = "Sudeste",
+    columns = c(N_OSC_SE, Crescimento_SE)
+  ) %>%
+
+  tab_spanner(
+    label = "Sul",
+    columns = c(N_OSC_S, Crescimento_S)
+  ) %>%
+
+  tab_spanner(
+    label = "Centro-Oeste",
+    columns = c(N_OSC_CO, Crescimento_CO)
+  ) %>%
+
+  # Negrito nos spanners
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(Crescimento, Crescimento_N, Crescimento_NE, Crescimento_SE,
+                  Crescimento_S, Crescimento_CO)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(QtdAnoReg_OSC)
+
+
+```
+
+
+&nbsp;
+
+*Tabela 12.4 - Porcentagem OSC por região* 
+
+```{r table PerOSCDecadaFund, echo=FALSE, warning=FALSE}
+
+PerOSCDecadaFund <- readRDS("tables/PerOSCDecadaFund.RDS")
+
+# Formata tabela:
+PerOSCDecadaFund %>%
+  gt(locale = "pt-BR") %>%
+
+  # Oculta algumas colunas
+  cols_hide(c(N_OSC)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    UF_Regiao = html("Grandes<br>Regiões"),
+    Ate1970 = "N",
+    PerAte1970 = "(%)",
+    De71a80 = "N",
+    PerDe71a80 = "(%)",
+    De81a90 = "N",
+    PerDe81a90 = "(%)",
+    De90a2000 = "N",
+    PerDe90a2000 = "(%)",
+    De2000a2010 = "N",
+    PerDe2000a2010 = "(%)",
+    De2010a2020 = "N",
+    PerDe2010a2020 = "(%)",
+    De2021a2024 = "N",
+    PerDe2021a2024 = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(Ate1970, De71a80, De81a90, De90a2000, De2000a2010, De2010a2020,
+                De2010a2020),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(PerAte1970, PerDe71a80, PerDe81a90, PerDe90a2000,
+                PerDe2000a2010, PerDe2010a2020, PerDe2021a2024),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !UF_Regiao )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Até 1970",
+    columns = c(Ate1970, PerAte1970)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1971<br>a 1980"),
+    columns = c(De71a80, PerDe71a80)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1981<br>a 1990"),
+    columns = c(De81a90, PerDe81a90)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1991<br>a 2000"),
+    columns = c(De90a2000, PerDe90a2000)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2001<br>a 2010"),
+    columns = c(De2000a2010, PerDe2000a2010)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2011<br>a 2020"),
+    columns = c(De2010a2020, PerDe2010a2020)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2021<br>a 2024"),
+    columns = c(De2021a2024, PerDe2021a2024)
+  ) %>%
+
+  # Negrito nos spanners
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerAte1970, PerDe71a80, PerDe81a90, PerDe90a2000,
+                  PerDe2000a2010, PerDe2010a2020, PerDe2021a2024)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(PerOSCDecadaFund)
+
+
+```
+
+&nbsp;
+
+*Gráfico 12.2 - Porcentagem OSC por década de fundação e região* 
+
+
+```{r plot grafPerOSCDecadaFund, echo=FALSE, warning=FALSE, message=FALSE}
+
+grafPerOSCDecadaFund <- readRDS("tables/grafPerOSCDecadaFund.RDS")
+
+# Gráfico
+grafPerOSCDecadaFund %>%
+  ggplot(aes(x = key, y = value, group = UF_Regiao, fill = UF_Regiao)) +
+  geom_bar(stat="identity", color="black", position=position_dodge()) +
+  scale_fill_manual(values = c("blue4", "blue1", "lightblue", "purple", "magenta")) +
+  theme_minimal() +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.text.x = element_text(angle = 35, hjust=1)
+  )
+
+rm(grafPerOSCDecadaFund)
+
+
+```
+
+&nbsp;
+
+*Tabela 12.5 - OSC por década de fundação e área de atuação* 
+
+```{r table PerOSCDecFundAreaSubArea, echo=FALSE, warning=FALSE}
+
+PerOSCDecFundAreaSubArea <- readRDS("tables/PerOSCDecFundAreaSubArea.RDS")
+
+# Formata tabela:
+PerOSCDecFundAreaSubArea %>%
+  gt(locale = "pt-BR") %>%
+
+  # Oculta algumas colunas
+  cols_hide(c(OrdemArea, Agregacao)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = html("Finalidade de atuação"),
+    Ate1970 = "N",
+    PerAte1970 = "(%)",
+    Ate1970 = "N",
+    PerAte1970 = "(%)",
+    De71a80 = "N",
+    PerDe71a80 = "(%)",
+    De81a90 = "N",
+    PerDe81a90 = "(%)",
+    De90a2000 = "N",
+    PerDe90a2000 = "(%)",
+    De2000a2010 = "N",
+    PerDe2000a2010 = "(%)",
+    De2010a2020 = "N",
+    PerDe2010a2020 = "(%)",
+    De2021a2024 = "N",
+    PerDe2021a2024 = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(Ate1970,De71a80, De81a90, De90a2000, De2000a2010, De2010a2020,
+                De2021a2024),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(PerAte1970, PerDe71a80, PerDe81a90, PerDe90a2000, PerDe2000a2010,
+                PerDe2010a2020, PerDe2021a2024),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Até 1970",
+    columns = c(Ate1970, PerAte1970)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1971<br>a 1980"),
+    columns = c(De71a80, PerDe71a80)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1981<br>a 1990"),
+    columns = c(De81a90, PerDe81a90)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 1991<br>a 2000"),
+    columns = c(De90a2000, PerDe90a2000)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2001<br>a 2010"),
+    columns = c(De2000a2010, PerDe2000a2010)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2011<br>a 2020"),
+    columns = c(De2010a2020, PerDe2010a2020)
+  ) %>%
+
+  tab_spanner(
+    label = html("De 2021<br>a 2024"),
+    columns = c(De2021a2024, PerDe2021a2024)
+  ) %>%
+
+  # Negrito nos spanners
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerAte1970, PerDe71a80, PerDe81a90, PerDe90a2000,
+                  PerDe2000a2010, PerDe2010a2020, PerDe2021a2024)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(PerOSCDecFundAreaSubArea)
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 12.3 - OSCs criadas a partir de 2001, por finalidades* 
+
+
+```{r plot grafRecenteOSCArea, echo=FALSE, warning=FALSE, message=FALSE}
+
+grafRecenteOSCArea <- readRDS("tables/grafRecenteOSCArea.RDS")
+
+# Gráfico
+grafRecenteOSCArea %>%
+  ggplot(aes(x = tx_area_atuacao, y = Per)) +
+  geom_bar(stat="identity", color="black", position=position_dodge(),
+           fill = "blue") +
+  theme_minimal() +
+  ylim(0, 40) +
+  geom_text(
+    aes(
+      label = format(round(Per, 0), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = Per
+    ),
+    vjust = -0.25
+  ) +
+  scale_x_discrete(labels = label_wrap(25)) +
+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust=1)
+  )
+
+rm(grafRecenteOSCArea)
+
+```
+
+&nbsp;
+
+*Gráfico 12.4 - Total de OSCs por ano e naturezas jurídicas* 
+
+
+```{r plot QtdAnoNatJur_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+QtdAnoNatJur_OSC <- readRDS("tables/QtdAnoNatJur_OSC.RDS")
+
+# Gráfico
+QtdAnoNatJur_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Oculta algumas colunas
+  cols_hide(c(N_OSC)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    Ano = html("Ano"),
+    N_OSC_3999 = "N",
+    Per_OSC_3999 = "(%)",
+    N_OSC_3220 = "N",
+    Per_OSC_3220 = "(%)",
+    N_OSC_3069 = "N",
+    Per_OSC_3069 = "(%)",
+    N_OSC_3301 = "N",
+    Per_OSC_3301 = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(N_OSC_3999, N_OSC_3220, N_OSC_3069, N_OSC_3301),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Per_OSC_3999, Per_OSC_3220, Per_OSC_3069, Per_OSC_3301),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !Ano )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = html("Associação<br>Privada"),
+    columns = c(N_OSC_3999, Per_OSC_3999)
+  ) %>%
+
+  tab_spanner(
+    label = html("Organização<br>Religiosa"),
+    columns = c(N_OSC_3220, Per_OSC_3220)
+  ) %>%
+
+  tab_spanner(
+    label = html("Fundação<br>Privada"),
+    columns = c(N_OSC_3069, Per_OSC_3069)
+  ) %>%
+
+  tab_spanner(
+    label = html("Organização<br>Social (OS)"),
+    columns = c(N_OSC_3301, Per_OSC_3301)
+  ) %>%
+
+  # Negrito nos spanners
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(Per_OSC_3999, Per_OSC_3220, Per_OSC_3069, Per_OSC_3301)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(QtdAnoNatJur_OSC)
+
+
+```
+

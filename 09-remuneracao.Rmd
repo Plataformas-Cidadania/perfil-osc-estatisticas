@@ -1,0 +1,970 @@
+# Remuneração do Pessoal Ocupado {#cap-remuneracao}
+
+```{r setup cap remuneracao, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+```
+
+Esta seção apresenta dados sobre a remuneração do pessoal ocupado assalariado.
+
+&nbsp;
+
+*Tabela 10.1 - Remuneração por área e subarea de atuação* 
+
+```{r table MedRemAreaSubArea_OSC, echo=FALSE, warning=FALSE}
+
+MedRemAreaSubArea_OSC <- readRDS("tables/MedRemAreaSubArea_OSC.RDS")
+
+# Tabela Inteira:
+MedRemAreaSubArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    media_salarial = "R$ 1,00 corrente",
+    media_salarialSM = "Salários Mínimos",
+    Soma_Vinculos = "N",
+    Per_Vinculos = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(media_salarial, Soma_Vinculos),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarialSM, Per_Vinculos),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Salário Médio Mensal",
+    columns = c(media_salarial, media_salarialSM),
+    id = "span_N_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Número de Vínculos",
+    columns = c(Soma_Vinculos, Per_Vinculos),
+    id = "span_N_Sup"
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(media_salarialSM)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 10.1 - Remuneração por área de atuação* 
+
+```{r plot grafMedRemAreaSubArea_OSC, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE, message=FALSE}
+
+grafMedRemAreaSubArea_OSC <- readRDS("tables/grafMedRemAreaSubArea_OSC.RDS")
+
+# Gráficos:
+# Gráfico
+grafMedRemAreaSubArea_OSC %>%
+  dplyr::filter(NomeAreaSubArea != "Associações patronais e profissionais") %>%
+  ggplot(aes(x = NomeAreaSubArea, y = media_salarial)) +
+  geom_bar(stat="identity", color="black", position=position_dodge(),
+           fill = "blue")+
+  theme_minimal() +
+  scale_x_discrete(labels = label_wrap(25)) +
+  ylim(0, 6500) +
+  geom_text(
+    aes(
+      label = paste("R$",
+                    format(round(media_salarial, 0), big.mark = ".",
+                           decimal.mark = ",",
+                           scientific = FALSE)),
+      y = media_salarial
+    ),
+    vjust = -0.25
+  ) +
+
+  geom_point(aes(y = media_salarialSM * 1500), color = "red", size = 3) +
+  geom_label(
+    aes(
+      y = media_salarialSM * 1500,
+      label = format(round(media_salarialSM, 1),
+                     big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE)
+    ),
+    fill = "pink",
+    label.size = 0,
+    position = position_dodge(width=0.9),
+    vjust = 0.25,
+    hjust = -0.2) +
+
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = ".",
+                                decimal.mark = ",",
+                                scientific = FALSE),
+    # Features of the first axis
+    name = "Remumeração (R$)",
+
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~./1500, name="Salários Mínimos")
+  ) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 30, hjust=1)
+  )
+
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 10.2 - Escolaridade dos vínculos, por Grande Região e UF* 
+
+
+```{r table MedRemRegUF_OSC, echo=FALSE, warning=FALSE}
+
+MedRemRegUF_OSC <- readRDS("tables/MedRemRegUF_OSC.RDS")
+
+# Formata tabela:
+# Tabela Inteira:
+MedRemRegUF_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeRegUF = "Região geográfica",
+    media_salarial = "R$ 1,00 corrente",
+    media_salarialSM = "Salários Mínimos",
+    Soma_Vinculos = "N",
+    Per_Vinculos = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(media_salarial, Soma_Vinculos),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarialSM, Per_Vinculos),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeRegUF )
+  ) %>%
+
+  # Torna as UFs mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeRegUF,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Salário Médio Mensal",
+    columns = c(media_salarial, media_salarialSM),
+    id = "span_N_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Número de Vínculos",
+    columns = c(Soma_Vinculos, Per_Vinculos),
+    id = "span_N_Sup"
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(media_salarialSM)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 10.2 - Remuneração por UF* 
+
+```{r plot grafMedRemReg_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+MedRemRegUF_OSC <- readRDS("tables/MedRemRegUF_OSC.RDS")
+
+
+grafMedRemReg_OSC <- MedRemRegUF_OSC %>%
+  dplyr::filter(Agregacao == "Regiao")
+
+# Gráficos:
+# Gráfico
+grafMedRemReg_OSC %>%
+  ggplot(aes(x = NomeRegUF, y = media_salarial)) +
+  geom_bar(stat="identity", color="black", position=position_dodge(),
+           fill = "blue") +
+  theme_minimal() +
+  ylim(0, 6000) +
+  geom_text(
+    aes(
+      label = paste("R$",
+                    format(round(media_salarial, 0), big.mark = ".",
+                           decimal.mark = ",",
+                           scientific = FALSE)),
+      y = media_salarial
+    ),
+    vjust = -0.25
+  ) +
+
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = ".",
+                                decimal.mark = ",",
+                                scientific = FALSE),
+    # Features of the first axis
+    name = "Remumeração (R$)",
+
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~./1400, name = "Salários Mínimos")
+  ) +
+
+  geom_point(aes(y = media_salarialSM * 1400), color = "red", size = 3) +
+  geom_label(
+    aes(
+      y = media_salarialSM * 1400,
+      label = format(round(media_salarialSM, 1),
+                     big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE)
+    ),
+    fill = "pink",
+    label.size = 0,
+    position = position_dodge(width=0.9),
+    vjust = 0.25,
+    hjust = -0.2) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank()
+  )
+
+
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 10.3 - Remuneração por UF em Reais e Salários Mínimos* 
+
+```{r plot MedRemRegUF_OSC, fig.height = 7, fig.width = 7, echo=FALSE, warning=FALSE, message=FALSE}
+
+MedRemRegUF_OSC <- readRDS("tables/MedRemRegUF_OSC.RDS")
+
+# Gráficos:
+MedRemRegUF_OSC %>%
+  mutate(NomeRegUF = fct_reorder(NomeRegUF, UF_Ordem, .desc = TRUE)) %>%
+  ggplot(aes(y = NomeRegUF, x = media_salarial, fill = Agregacao)) +
+  geom_col() +
+  theme_minimal() +
+  scale_x_continuous(
+    labels = function(x) format(x, big.mark = ".",
+                                decimal.mark = ",",
+                                scientific = FALSE)
+    ) +
+  geom_text(
+    aes(
+      label = paste("R$",
+                    format(round(media_salarial, 0), big.mark = ".",
+                           decimal.mark = ",",
+                           scientific = FALSE)),
+      x = media_salarial
+    ),
+    hjust = -0.25,
+    size = 3
+  ) +
+  xlim(0, 8500) +
+  xlab("Remuneração (R$)") +
+  geom_label(
+    aes(
+      x = media_salarialSM * 800,
+      label = format(round(media_salarialSM, 1),
+                     big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE)
+    ),
+    fill = "pink",
+    label.size = 0,
+    position = position_dodge(width=0.9),
+    size = 2.5) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 10.3 - Escolaridade dos vínculos, por Grande Região e UF* 
+
+
+```{r table MedRemSexAreaSubArea_OSC, echo=FALSE, warning=FALSE}
+
+MedRemSexAreaSubArea_OSC <- readRDS("tables/MedRemSexAreaSubArea_OSC.RDS")
+
+# Formata tabela:
+MedRemSexAreaSubArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea,
+              Soma_Vinculos_F, Soma_Vinculos_M,
+              Per_Vinculos_F, Per_Vinculos_M)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    media_salarial_F = html("R$ 1,00 corrente<br>(Mulher)"),
+    media_salarial_M = html("R$ 1,00 corrente<br>(Homem)"),
+    media_salarialSM_F = html("Salários Mínimos<br>(Mulher)"),
+    media_salarialSM_M = html("Salários Mínimos<br>(Homem)")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  # fmt_number(
+  #   columns = c(media_salarial, Soma_Vinculos),
+  #   sep_mark = ".",
+  #   decimals = 0
+  # ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarial_F, media_salarial_M,
+                media_salarialSM_F, media_salarialSM_M),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Salário Médio Mensal",
+    columns = c(media_salarial_F, media_salarial_M)
+  ) %>%
+
+  tab_spanner(
+    label = "Salários Mínimos",
+    columns = c(media_salarialSM_F, media_salarialSM_M)
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 10.4 - Remuneração por gênero e área de atuação* 
+
+```{r plot MedRemSexAreaSubArea_OSC, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE}
+
+MedRemSexAreaSubArea_OSC <- readRDS("tables/MedRemSexAreaSubArea_OSC.RDS")
+
+# Gráficos:
+MedRemSexAreaSubArea_OSC %>%
+  dplyr::filter(NomeAreaSubArea != "Associações patronais e profissionais",
+                Agregacao == "Area") %>%
+  select(Agregacao, OrdemArea, NomeAreaSubArea, media_salarialSM_F,
+         media_salarialSM_M) %>%
+  gather("genero", "SMs", media_salarialSM_F:media_salarialSM_M) %>%
+  mutate(genero = ifelse(genero == "media_salarialSM_F", "Mulher", "Homem")) %>%
+  ggplot(aes(x = NomeAreaSubArea, y = SMs, group = genero, fill = genero)) +
+  geom_bar(stat="identity", color="black", position=position_dodge()) +
+  scale_fill_manual(values = c("blue1", "purple")) +
+  theme_minimal() +
+  ylab("Salários Mínimos") + 
+  scale_x_discrete(labels = label_wrap(25)) +
+  ylim(0, 6) +
+  geom_text(
+    aes(
+      label = format(round(SMs, 1), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = SMs
+    ),
+    vjust = -0.4,
+    hjust = 0.5,
+    position = position_dodge(width = 1)
+  ) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 30, hjust=1)
+  )
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 10.4 - Remuneração por escolaridade, área e subárea de atuação* 
+
+
+```{r table MedRemEscAreaSubArea_OSC, echo=FALSE, warning=FALSE}
+
+MedRemEscAreaSubArea_OSC <- readRDS("tables/MedRemEscAreaSubArea_OSC.RDS")
+
+# Formata tabela:
+MedRemEscAreaSubArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea,
+              Soma_Vinculos_Sup, Soma_Vinculos_SemSup,
+              Per_Vinculos_Sup, Per_Vinculos_SemSup)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    media_salarial_Sup = html("R$ 1,00 corrente<br>(Com Nível Superior)"),
+    media_salarial_SemSup = html("R$ 1,00 corrente<br>(Sem Nível Superior)"),
+    media_salarialSM_Sup = html("Salários Mínimos<br>(Com Nível Superior)"),
+    media_salarialSM_SemSup = html("Salários Mínimos<br>(Sem Nível Superior)")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  # fmt_number(
+  #   columns = c(media_salarial, Soma_Vinculos),
+  #   sep_mark = ".",
+  #   decimals = 0
+  # ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarial_Sup, media_salarial_SemSup,
+                media_salarialSM_Sup, media_salarialSM_SemSup),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Salário Médio Mensal",
+    columns = c(media_salarial_Sup, media_salarial_SemSup)
+  ) %>%
+
+  tab_spanner(
+    label = "Salários Mínimos",
+    columns = c(media_salarialSM_Sup, media_salarialSM_SemSup)
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 10.5 - Remuneração por escolaridade e área de atuação* 
+
+```{r plot MedRemEscAreaSubArea_OSC, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE}
+
+MedRemEscAreaSubArea_OSC <- readRDS("tables/MedRemEscAreaSubArea_OSC.RDS")
+
+# Gráficos:
+MedRemEscAreaSubArea_OSC %>%
+  dplyr::filter(NomeAreaSubArea != "Associações patronais e profissionais",
+                Agregacao == "Area") %>%
+  select(Agregacao, OrdemArea, NomeAreaSubArea, media_salarialSM_Sup,
+         media_salarialSM_SemSup) %>%
+  gather("EnsinoSup", "SMs", media_salarialSM_Sup:media_salarialSM_SemSup) %>%
+  mutate(EnsinoSup = ifelse(EnsinoSup == "media_salarialSM_Sup",
+                         "Com ensino superior",
+                         "Sem ensino superior")) %>%
+  ggplot(aes(x = NomeAreaSubArea, y = SMs, group = EnsinoSup, fill = EnsinoSup)) +
+  geom_bar(stat="identity", color="black", position=position_dodge()) +
+  scale_fill_manual(values = c("blue1", "purple")) +
+  theme_minimal() +
+  ylab("Salários Mínimos") + 
+  scale_x_discrete(labels = label_wrap(25)) +
+  ylim(0, 8) +
+  geom_text(
+    aes(
+      label = format(round(SMs, 1), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = SMs
+    ),
+    vjust = -0.4,
+    hjust = 0.5,
+    position = position_dodge(width = 1)
+  ) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 35, hjust=1)
+  )
+
+
+
+```
+
+
+
+&nbsp;
+
+*Tabela 10.5 - Remuneração por raça, área e subárea de atuação* 
+
+
+```{r table MedRemRacaAreaSubArea_OSC, echo=FALSE, warning=FALSE}
+
+MedRemRacaAreaSubArea_OSC <- readRDS("tables/MedRemRacaAreaSubArea_OSC.RDS")
+
+# Formata tabela:
+MedRemRacaAreaSubArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea,
+              Soma_Vinculos_branco, Soma_Vinculos_nbranco,
+              Per_Vinculos_branco, Per_Vinculos_nbranco)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    media_salarial_branco = html("R$ 1,00 corrente<br>(Brancos)"),
+    media_salarial_nbranco = html("R$ 1,00 corrente<br>(Não Brancos)"),
+    media_salarialSM_branco = html("Salários Mínimos<br>(Brancos)"),
+    media_salarialSM_nbranco = html("Salários Mínimos<br>(Não Brancos)")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  # fmt_number(
+  #   columns = c(media_salarial, Soma_Vinculos),
+  #   sep_mark = ".",
+  #   decimals = 0
+  # ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarial_branco, media_salarial_nbranco,
+                media_salarialSM_branco, media_salarialSM_nbranco),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = "Salário Médio Mensal",
+    columns = c(media_salarial_branco, media_salarial_nbranco)
+  ) %>%
+
+  tab_spanner(
+    label = "Salários Mínimos",
+    columns = c(media_salarialSM_branco, media_salarialSM_nbranco)
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 10.6 - Remuneração por raça e área de atuação* 
+
+```{r plot MedRemRacaAreaSubArea_OSC, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE}
+
+MedRemRacaAreaSubArea_OSC <- readRDS("tables/MedRemRacaAreaSubArea_OSC.RDS")
+
+# Gráficos:
+MedRemRacaAreaSubArea_OSC %>%
+  dplyr::filter(NomeAreaSubArea != "Associações patronais e profissionais",
+                Agregacao == "Area") %>%
+  select(Agregacao, OrdemArea, NomeAreaSubArea, media_salarialSM_branco,
+         media_salarialSM_nbranco) %>%
+  gather("Raca", "SMs", media_salarialSM_branco:media_salarialSM_nbranco) %>%
+  mutate(Raca = ifelse(Raca == "media_salarialSM_branco",
+                            "Brancos",
+                            "Não Brancos")) %>%
+  ggplot(aes(x = NomeAreaSubArea, y = SMs, group = Raca, fill = Raca)) +
+  geom_bar(stat="identity", color="black", position=position_dodge()) +
+  scale_fill_manual(values = c("lightgreen", "pink")) +
+  theme_minimal() +
+  scale_x_discrete(labels = label_wrap(25)) +
+  ylim(0, 7) +
+  geom_text(
+    aes(
+      label = format(round(SMs, 1), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = SMs
+    ),
+    vjust = -0.4,
+    hjust = 0.5,
+    position = position_dodge(width = 1)
+  ) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust=1)
+  )
+
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 10.7 - Remuneração por raça e escolaridade* 
+
+```{r plot MedRemRacaEsc_OSC, echo=FALSE, warning=FALSE}
+
+MedRemRacaEsc_OSC <- readRDS("tables/MedRemRacaEsc_OSC.RDS")
+
+# Gráficos:
+MedRemRacaEsc_OSC %>%
+  ggplot(aes(x = raca, y = media_salarial, group = escolaridade, fill = escolaridade)) +
+  geom_bar(stat="identity", color="black", position=position_dodge()) +
+  scale_fill_manual(values = c("blue1", "purple")) +
+  theme_minimal() +
+  ylab("Salários Mínimos") + 
+  ylim(0, 9000) +
+  geom_text(
+    aes(
+      label = format(round(media_salarial, 0), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = media_salarial
+    ),
+    vjust = -0.4,
+    hjust = 0.5,
+    position = position_dodge(width = 1)
+  ) +
+
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+  )
+
+```
+
+&nbsp;
+
+*Tabela 10.6 - Remuneração por Região, UF, área e subarea de atuação* 
+
+
+```{r table MedRemRegUFAreaSubArea_OSC, echo=FALSE, warning=FALSE}
+
+MedRemRegUFAreaSubArea_OSC <- readRDS("tables/MedRemRegUFAreaSubArea_OSC.RDS")
+
+# Formata tabela:
+MedRemRegUFAreaSubArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea,
+              Soma_Vinculos_BR, Soma_Vinculos_N, Soma_Vinculos_NE,
+              Soma_Vinculos_S, Soma_Vinculos_SE, Soma_Vinculos_CO)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    media_salarial_BR = "Brasil",
+    media_salarial_N = "Norte",
+    media_salarial_NE = "Nordeste",
+    media_salarial_S = "Sul",
+    media_salarial_SE = "Sudeste",
+    media_salarial_CO = "Centro-Oeste"
+    # media_salarial_F = html("R$ 1,00 corrente<br>(Mulher)"),
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  # fmt_number(
+  #   columns = c(media_salarial, Soma_Vinculos),
+  #   sep_mark = ".",
+  #   decimals = 0
+  # ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(media_salarial_BR, media_salarial_N, media_salarial_NE,
+                media_salarial_S, media_salarial_SE, media_salarial_CO),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Destaca os dados agregados
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = media_salarial_BR )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  tab_spanner(
+    label = html("Salário médio mensal (salário mínimo)"),
+    columns = c(media_salarial_BR, media_salarial_N, media_salarial_NE,
+                media_salarial_S, media_salarial_SE, media_salarial_CO)
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+

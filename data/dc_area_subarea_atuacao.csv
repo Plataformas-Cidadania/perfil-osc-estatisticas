@@ -1,0 +1,44 @@
+cd_subarea_atuacao;cd_area_atuacao;tx_subarea_atuacao;tx_area_atuacao
+1;1;Habitação;Habitação
+2;1;Outros Habitação;Habitação
+3;2;Hospitais;Saúde
+4;2;Outros serviços de saúde;Saúde
+6;3;Cultura e arte;Cultura e recreação
+7;3;Esportes e recreação;Cultura e recreação
+8;3;Outros Cultura e recreação;Cultura e recreação
+9;4;Educação infantil;Educação e pesquisa
+10;4;Ensino fundamental;Educação e pesquisa
+11;4;Ensino médio;Educação e pesquisa
+12;4;Ensino superior;Educação e pesquisa
+13;4;Estudos e pesquisas;Educação e pesquisa
+14;4;Educação profissional;Educação e pesquisa
+15;4;Outras formas de educação/ensino;Educação e pesquisa
+16;4;Outros Educação e pesquisa;Educação e pesquisa
+17;5;Assistência social;Assistência social
+18;5;Outros Assistência social;Assistência social
+19;6;Religião;Religião
+20;6;Outros Religião;Religião
+21;7;Associações empresariais e patronais;Associações patronais e profissionais
+22;7;Associações profissionais;Associações patronais e profissionais
+23;7;Associações de produtores rurais, pescadores e similares;Associações patronais e profissionais
+24;7;Cooperativas sociais;Associações patronais e profissionais
+25;7;Outras Associações patronais e profissionais;Associações patronais e profissionais
+26;8;Meio ambiente;Meio ambiente e proteção animal
+27;8;Proteção animal;Meio ambiente e proteção animal
+28;8;Outros Meio ambiente e proteção animal;Meio ambiente e proteção animal
+29;9;Associações de moradores;Desenvolvimento e defesa de direitos e interesses
+30;9;Centros e associações comunitárias;Desenvolvimento e defesa de direitos e interesses
+31;9;Desenvolvimento rural;Desenvolvimento e defesa de direitos e interesses
+32;9;Emprego e treinamento;Desenvolvimento e defesa de direitos e interesses
+33;9;Defesa de direitos de grupos e minorias;Desenvolvimento e defesa de direitos e interesses
+34;9;Desenvolvimento e defesa de direitos;Desenvolvimento e defesa de direitos e interesses
+35;11;Outras organizações da sociedade civil;Outras atividades associativas
+36;9;Associações de pais, professores, alunos e afins;Desenvolvimento e defesa de direitos e interesses
+37;9;Associações patronais e profissionais;Desenvolvimento e defesa de direitos e interesses
+38;9;Cultura e recreação;Desenvolvimento e defesa de direitos e interesses
+39;9;Defesa de direitos e interesses - múltiplas áreas;Desenvolvimento e defesa de direitos e interesses
+40;9;Meio ambiente e proteção animal;Desenvolvimento e defesa de direitos e interesses
+41;9;Outras formas de desenvolvimento e defesa de direitos e interesses;Desenvolvimento e defesa de direitos e interesses
+42;9;Desenvolvimento e defesa de direitos e interesses - Religião;Desenvolvimento e defesa de direitos e interesses
+43;9;Saúde, assistência social e educação;Desenvolvimento e defesa de direitos e interesses
+44;4;Atividades de apoio à educação;Educação e pesquisa

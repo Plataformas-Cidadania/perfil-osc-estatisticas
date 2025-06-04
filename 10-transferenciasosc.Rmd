@@ -1,0 +1,877 @@
+# Transferências de Recursos Públicos {#cap-transferenciasosc}
+
+```{r setup cap transferenciasosc, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+countTable = 1
+countplot = 1
+```
+
+Esta seção apresenta as transferências voluntárias de recursos públicos federais para as Organizações da Sociedade Civil (OSCs). Os recursos públicos destinados às OSCs são uma via para compreender melhor o espaço que as organizações ocupam em diferentes áreas de políticas, e, em termos mais amplos, nas políticas públicas estatais do país.
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferência por Ano* 
+
+```{r table TransAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransAno_OSC <- readRDS("tables/TransAno_OSC.RDS")
+
+# Formata tabela:
+TransAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    ano = "Ano",
+    transPago_osc = html("Transferências para OSCs<br>(em milhões)"),
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(transPago_osc),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !ano )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` -  Transferência por Ano* 
+
+
+```{r plot TransAno_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+TransAno_OSC <- readRDS("tables/TransAno_OSC.RDS")
+
+# Gráfico
+TransAno_OSC %>%
+  ggplot(aes(x = ano, y = transPago_osc)) +
+  geom_bar(stat="identity", color="black", position=position_dodge(),
+           fill = "lightblue")+
+  theme_classic() +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = ".",
+                                decimal.mark = ",",
+                                scientific = FALSE)
+    ) +
+
+  scale_x_continuous(breaks = unique(TransAno_OSC$ano)) +
+  
+  ylab("Tranferências (em milhões)") + 
+
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust=1)
+  )
+
+```
+
+
+<!-- &nbsp; -->
+
+<!-- *Tabela 11.`r countTable` - Transferências por Função Orçamentária por Ano*  -->
+
+<!-- ```{r table TransFuncOrAno_OSC, echo=FALSE, warning=FALSE} -->
+
+<!-- countTable = countTable + 1 -->
+<!-- TransFuncOrAno_OSC <- readRDS("tables/TransFuncOrAno_OSC.RDS") -->
+
+<!-- # Formata tabela: -->
+<!-- TransFuncOrAno_OSC %>% -->
+<!--   gt(locale = "pt-BR") %>% -->
+
+<!--   # Esta coluna não aparece nos dados, só serve para diferenciar as regiões -->
+<!--   cols_hide(c(FuncOr)) %>% -->
+
+<!--   # Coloca o valor missing de crescimento no primeiro ano em formato amigável -->
+<!--   sub_missing( -->
+<!--     missing_text = "-" -->
+<!--   ) %>% -->
+
+<!--   # Nomes amigáveis das Colunas -->
+<!--   cols_label( -->
+<!--     FuncaDesc = html("Função<br>Orçamentária") -->
+<!--   ) %>% -->
+
+<!--   # Deixa o Nome das Colunas em negrito e centralizado. -->
+<!--   tab_style( -->
+<!--     style = cell_text(align = "center", weight = "bold"), -->
+<!--     locations = cells_column_labels() -->
+<!--   ) %>% -->
+
+<!--   # Formata os números da tabela -->
+<!--   # Inteiros: -->
+<!--   fmt_number( -->
+<!--     columns = !FuncaDesc, -->
+<!--     sep_mark = ".", -->
+<!--     decimals = 0 -->
+<!--   ) %>% -->
+
+<!--   # Centraliza os dados das tabelas -->
+<!--   tab_style( -->
+<!--     style = cell_text(align = "center"), -->
+<!--     locations = cells_body( -->
+<!--       columns = !FuncaDesc ) -->
+<!--   ) %>% -->
+
+<!--   # Deixa o total em negrito -->
+<!--   tab_style( -->
+<!--     style = cell_text(weight = "bold"), -->
+<!--     locations = cells_body( -->
+<!--       rows = FuncaDesc == "Total") -->
+<!--   ) %>%  -->
+
+<!--   # Fonte dos dados -->
+<!--   tab_source_note( -->
+<!--     source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br> -->
+<!--                      **Fonte:** Mapa das Organizações da Sociedade Civil.<br> -->
+<!--                      Elaboração do IPEA.") -->
+<!--   ) -->
+
+<!-- rm(TransFuncOrAno_OSC) -->
+
+<!-- ``` -->
+
+
+
+<!-- &nbsp; -->
+
+<!-- *Gráfico 11.`r countplot` - Transferências por Função Orçamentária*  -->
+
+
+<!-- ```{r plot TransFuncOr_OSC, echo=FALSE, warning=FALSE, message=FALSE} -->
+
+<!-- countplot <- countplot + 1 -->
+<!-- TransFuncOr_OSC <- readRDS("tables/TransFuncOr_OSC.RDS") -->
+
+<!-- # Gráfico -->
+<!-- TransFuncOr_OSC %>% -->
+<!--   ggplot(aes(x = FuncaDesc, y = transPago_osc)) + -->
+<!--   geom_bar(stat="identity", color="black", position=position_dodge(), -->
+<!--            fill = "blue")+ -->
+<!--   theme_classic() + -->
+<!--   scale_y_continuous( -->
+<!--     labels = function(x) format(x, big.mark = ".", -->
+<!--                                 decimal.mark = ",", -->
+<!--                                 scientific = FALSE) -->
+<!--   ) + -->
+<!--   theme( -->
+<!--     axis.title.x = element_blank(), -->
+<!--     axis.title.y = element_blank(), -->
+<!--     axis.text.x = element_text(angle = 90, hjust=1) -->
+<!--   ) -->
+
+<!-- ``` -->
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por Região e UF por Ano* 
+
+```{r table TransRegUFAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransRegUFAno_OSC <- readRDS("tables/TransRegUFAno_OSC.RDS")
+
+# Formata tabela:
+TransRegUFAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeRegUF = html("Região e UF")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !NomeRegUF,
+    sep_mark = ".",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeRegUF )
+  ) %>%
+
+  # Torna as UFs mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeRegUF,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` - Transferências por Região* 
+
+
+```{r plot grafTransReg_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+grafTransReg_OSC <- readRDS("tables/grafTransReg_OSC.RDS")
+
+# Gráfico
+grafTransReg_OSC %>%
+  ggplot(aes(x = UF_Regiao, y = Per)) +
+  geom_bar(stat="identity", color="black", position=position_dodge(),
+           fill = "blue")+
+  theme_classic() +
+  scale_y_continuous(
+    labels = scales::percent
+  ) +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+  )
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` - Transferências por Região por Ano* 
+
+
+```{r plot grafTransRegAno_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+grafTransRegAno_OSC <- readRDS("tables/grafTransRegAno_OSC.RDS")
+
+# Gráfico
+grafTransRegAno_OSC %>%
+  ggplot(aes(y = transPago_osc, x = ano, group = UF_Regiao, color = UF_Regiao)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  ylab("Bilhões") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    panel.grid.major.y = element_line()
+  )
+
+```
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por Área e Subárea de atuação por Ano* 
+
+```{r table TransAreaSubAreaAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransAreaSubAreaAno_OSC <- readRDS("tables/TransAreaSubAreaAno_OSC.RDS")
+
+# Formata tabela:
+TransAreaSubAreaAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = html("Finalidade de atuação")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !NomeAreaSubArea,
+    sep_mark = ".",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(TransAreaSubAreaAno_OSC)
+
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` - Transferências por Area de Atuação por Ano* 
+
+
+```{r plot grafTransAreaAno_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+grafTransAreaAno_OSC <- readRDS("tables/grafTransAreaAno_OSC.RDS")
+
+# Gráfico
+grafTransAreaAno_OSC %>%
+  ggplot(aes(y = transPago_osc, x = ano, group = tx_area_atuacao,
+             color = tx_area_atuacao)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  scale_x_continuous(breaks = unique(grafTransAreaAno_OSC$ano)) +
+  ylab("Bilhões") +
+  # scale_color_manual(labels = label_wrap(25)) +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    panel.grid.major.y = element_line(),
+    legend.position = "bottom"
+  )
+
+rm(grafTransAreaAno_OSC)
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por porte e por Ano* 
+
+```{r table TransPorteAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransPorteAno_OSC <- readRDS("tables/TransPorteAno_OSC.RDS")
+
+# Formata tabela:
+TransPorteAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(OrdemPorte)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    PorteOSC = html("Pessoal Ocupado")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !PorteOSC,
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !PorteOSC )
+  ) %>%
+
+  # Total em negrito
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      rows = PorteOSC == "Total"
+    )
+  )
+
+rm(TransPorteAno_OSC)
+
+
+```
+
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por porte e por Ano (porcentagem)* 
+
+```{r table TransPerPorteAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransPerPorteAno_OSC <- readRDS("tables/TransPerPorteAno_OSC.RDS")
+
+# Formata tabela:
+TransPerPorteAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(OrdemPorte)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    PorteOSC = html("Pessoal Ocupado")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !PorteOSC,
+    sep_mark = ".",
+    decimals = 1
+  ) %>%
+  
+  # Inteiros (sem decimal no total)
+  fmt_number(
+    columns = !PorteOSC,
+    rows = PorteOSC == "Total",
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !PorteOSC )
+  ) %>%
+
+  # Total em negrito
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      rows = PorteOSC == "Total"
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(TransPerPorteAno_OSC)
+
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` - Transferências (percentuais) por Porte por Ano* 
+
+
+```{r plot grafTransPorteAno_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+grafTransPorteAno_OSC <- readRDS("tables/grafTransPorteAno_OSC.RDS")
+
+# Gráfico
+grafTransPorteAno_OSC %>%
+  ggplot(aes(y = Trans, x = ano, group = PorteOSC, color = PorteOSC)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  # scale_x_continuous(breaks = unique(grafTransPorteAno_OSC$ano)) +
+  ylab("Milhões") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    panel.grid.major.y = element_line(),
+    legend.position = "bottom"
+  )
+
+rm(grafTransPorteAno_OSC)
+
+```
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por Natureza Jurídica e por Ano* 
+
+```{r table TransNatJurAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransNatJurAno_OSC <- readRDS("tables/TransNatJurAno_OSC.RDS")
+
+# Formata tabela:
+TransNatJurAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(NatJurOrdem)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NatJur = html("Natureza jurídica")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !NatJur,
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NatJur )
+  ) %>%
+
+  # Total em negrito
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      rows = NatJur == "Total"
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(TransNatJurAno_OSC)
+
+```
+
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Transferências por Natureza Jurídica e por Ano (porcentagem)* 
+
+```{r table TransPerNatJurAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransPerNatJurAno_OSC <- readRDS("tables/TransPerNatJurAno_OSC.RDS")
+
+# Formata tabela:
+TransPerNatJurAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(NatJurOrdem)) %>%
+
+  # Coloca o valor missing de crescimento no primeiro ano em formato amigável
+  sub_missing(
+    missing_text = "-"
+  ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NatJur = html("Natureza jurídica")
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = !NatJur,
+    sep_mark = ".",
+    decimals = 1
+  ) %>%
+
+  # Inteiros:
+  fmt_number(
+    columns = !NatJur,
+    rows = NatJur == "Total",
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NatJur )
+  ) %>%
+
+  # Total em negrito
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      rows = NatJur == "Total"
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+rm(TransPerNatJurAno_OSC)
+
+```
+
+
+
+
+&nbsp;
+
+*Gráfico 11.`r countplot` - Transferências (percentuais) por Natureza Jurídica por Ano* 
+
+
+```{r plot grafTransNatJurAno_OSC, echo=FALSE, warning=FALSE, message=FALSE}
+
+countplot <- countplot + 1
+grafTransNatJurAno_OSC <- readRDS("tables/grafTransNatJurAno_OSC.RDS")
+
+# Gráfico
+grafTransNatJurAno_OSC %>%
+  ggplot(aes(y = Trans, x = ano, group = NatJur, color = NatJur)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  # scale_x_continuous(breaks = unique(grafTransPorteAno_OSC$ano)) +
+  ylab("Milhões") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    panel.grid.major.y = element_line(),
+    legend.position = "bottom"
+  )
+
+rm(grafTransNatJurAno_OSC)
+
+```
+
+
+*Tabela 11.`r countTable` - Número de OSC beneficiadas por ano* 
+
+```{r table TransFreqAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransFreqAno_OSC <- readRDS("tables/TransFreqAno_OSC.RDS")
+
+# Formata tabela:
+TransFreqAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    ano = "Ano",
+    transPago_osc = html("Número de OSCs que<br>receberam transferências federais"),
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(transPago_osc),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !ano )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+rm(TransFreqAno_OSC)
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 11.`r countTable` - Valor Médio de Transferências por Ano* 
+
+```{r table TransMeanAno_OSC, echo=FALSE, warning=FALSE}
+
+countTable = countTable + 1
+TransMeanAno_OSC <- readRDS("tables/TransMeanAno_OSC.RDS")
+
+# Formata tabela:
+TransMeanAno_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    ano = "Ano",
+    MeantransPago_osc = html("Transferências média para OSCs<br>(em milhões)"),
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(MeantransPago_osc),
+    sep_mark = ".",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !ano )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+```
+
+

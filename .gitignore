@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+rsconnect
+/temp/dataset/*
+
+keys/psql12-usr_manutencao_mapa.json

@@ -1,0 +1,767 @@
+# Porte das OSCs {#cap-porteosc}
+
+```{r setup cap porteosc, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+```
+
+Esta seção apresenta dados sobre o número de vínculos de trabalho formais das Organizações da Sociedade Civil - OSCs.
+
+&nbsp;
+
+*Tabela 8.1 - Total e percentual de OSCs, por faixas de vínculos* 
+
+
+```{r table FreqPorte_OSC, echo=FALSE, warning=FALSE}
+
+FreqPorte_OSC <- readRDS("tables/FreqPorte_OSC.RDS")
+
+# Formata tabela:
+FreqPorte_OSC %>% 
+  gt(locale = "pt-BR") %>%
+  
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(OrdemPorte)) %>%
+  
+  # Nomes amigáveis das Colunas
+  cols_label(
+    PorteOSC = "Faixas de vínculos",
+    Freq = "N",
+    Per = "(%)"
+  ) %>%
+  
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(Per),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+  fmt_number(
+    columns = c(Freq),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+  
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !PorteOSC )
+  ) %>%
+  
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "OSCs",
+    columns = c(Freq, Per)
+  ) %>% 
+  
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+```
+
+&nbsp;
+
+*Tabela 8.2 - Total e percentual de OSCs por finalidades de atuação e por faixas de número de vínculos (2015) - Parte 1* 
+
+```{r table JoinFreqPorteArea_OSC_1, echo=FALSE, warning=FALSE}
+
+JoinFreqPorteArea_OSC <- readRDS("tables/JoinFreqPorteArea_OSC.RDS")
+
+# Formata tabela:
+
+# Tabela 1
+JoinFreqPorteArea_OSC %>%
+  # Seleciona somente primeira metade
+  select(Agregacao:PerDe5a9, TotalArea, PerTotalArea) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade das OSCs",
+    SemVinculos = "N",
+    PerSemVinculos = "(%)",
+    De1a2 = "N",
+    PerDe1a2 = "(%)",
+    De3a4 = "N",
+    PerDe3a4 = "(%)",
+    De5a9 = "N",
+    PerDe5a9 = "(%)",
+    TotalArea = "N",
+    PerTotalArea = "(%)"  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(SemVinculos, De1a2, De3a4, De5a9,
+                TotalArea),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  fmt_number(
+    columns = c(PerSemVinculos, PerDe1a2, PerDe3a4, PerDe5a9,
+                PerTotalArea),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerSemVinculos, PerDe1a2, PerDe3a4, PerDe5a9, PerTotalArea)
+    )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = html("Sem<br>pessoal"),
+    columns = c(SemVinculos, PerSemVinculos)
+  ) %>%
+
+  tab_spanner(
+    label = "1 a 2",
+    columns = c(De1a2, PerDe1a2)
+  ) %>%
+
+  tab_spanner(
+    label = "3 a 4",
+    columns = c(De3a4, PerDe3a4)
+  ) %>%
+
+  tab_spanner(
+    label = "5 a 9",
+    columns = c(De5a9, PerDe5a9)
+  ) %>%
+
+  tab_spanner(
+    label = "Total",
+    columns = c(TotalArea, PerTotalArea)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+&nbsp;
+
+*Tabela 8.3 - Total e percentual de OSCs por finalidades de atuação e por faixas de número de vínculos (2015) - Parte 2* 
+
+```{r table JoinFreqPorteArea_OSC_2, echo=FALSE, warning=FALSE}
+
+JoinFreqPorteArea_OSC <- readRDS("tables/JoinFreqPorteArea_OSC.RDS")
+
+# Formata tabela:
+
+# Tabela 2
+JoinFreqPorteArea_OSC %>%
+  # Seleciona somente segunda metade
+  select(Agregacao, OrdemArea, NomeAreaSubArea, De10a49:PerTotalArea) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade das OSCs",
+    De10a49 = "N",
+    PerDe10a49 = "(%)",
+    De50a99 = "N",
+    PerDe50a99 = "(%)",
+    De100a499 = "N",
+    PerDe100a499 = "(%)",
+    Mais500 = "N",
+    PerMais500 = "(%)",
+    TotalArea = "N",
+    PerTotalArea = "(%)"  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(De10a49, De50a99, De100a499, Mais500, TotalArea),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  fmt_number(
+    columns = c(PerDe10a49, PerDe50a99, PerDe100a499, PerMais500, PerTotalArea),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerDe10a49, PerDe50a99, PerDe100a499, PerMais500,
+                  PerTotalArea)
+    )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "10 a 49",
+    columns = c(De10a49, PerDe10a49)
+  ) %>%
+
+  tab_spanner(
+    label = "50 a 99",
+    columns = c(De50a99, PerDe50a99)
+  ) %>%
+
+  tab_spanner(
+    label = "100 a 499",
+    columns = c(De100a499, PerDe100a499)
+  ) %>%
+
+  tab_spanner(
+    label = "500+",
+    columns = c(Mais500, PerMais500)
+  ) %>%
+
+  tab_spanner(
+    label = "Total",
+    columns = c(TotalArea, PerTotalArea)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+&nbsp;
+
+*Gráfico 8.1 - Total e percentual do número de OSCs por finalidades de atuação e por faixas de  número de vínculos - Todas as organizações* 
+
+```{r plot PlotFreqPorteArea_OSC_all, echo=FALSE, warning=FALSE, message=FALSE}
+
+PlotFreqPorteArea_OSC <- readRDS("tables/PlotFreqPorteArea_OSC.RDS")
+
+PlotFreqPorteArea_OSC %>%
+  ggplot(aes(x = NomeAreaSubArea, y = value, fill = key)) +
+  geom_bar(position="fill", stat="identity") +
+  scale_x_discrete(labels = label_wrap(25)) +
+  scale_fill_manual(
+    values=c(
+      "darkgreen",
+      "green",
+      "beige",
+      "darkorchid1",
+      "darkviolet",
+      "cyan",
+      "blue",
+      "blue4"
+      )) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(fill = 'Número de Vínculos:') +
+  guides(fill = guide_legend(reverse = TRUE) ) +
+  coord_flip() +
+  theme_classic() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+```
+
+
+&nbsp;
+
+*Gráfico 8.2 - Total e percentual do número de OSCs por finalidades de atuação e por faixas de  número de vínculos - Apenas organizações que têm vínculos* 
+
+```{r plot PlotFreqPorteArea_OSC_ComVinculo, echo=FALSE, warning=FALSE}
+
+PlotFreqPorteArea_OSC <- readRDS("tables/PlotFreqPorteArea_OSC.RDS")
+
+PlotFreqPorteArea_OSC %>%
+  dplyr::filter(key != "Sem Vínculos") %>%
+  ggplot(aes(x = NomeAreaSubArea, y = value, fill = key)) +
+  geom_bar(position="fill", stat="identity") +
+  scale_x_discrete(labels = label_wrap(25)) +
+  scale_fill_manual(
+    values=c(
+      "darkgreen",
+      "green",
+      "beige",
+      "darkorchid1",
+      "darkviolet",
+      "cyan",
+      "blue"
+    )) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(fill = 'Número de Vínculos:') +
+  guides(fill = guide_legend(reverse = TRUE) ) +
+  coord_flip() +
+  theme_classic() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+```
+
+
+&nbsp;
+
+*Tabela 8.4 - Número médio de vínculos de emprego em OSCs em diferentes finalidades de atuação,  por região* 
+
+```{r table JoinMeanVincRegArea_OSC, echo=FALSE, warning=FALSE}
+
+JoinMeanVincRegArea_OSC <- readRDS("tables/JoinMeanVincRegArea_OSC.RDS")
+
+# Formata tabela:
+JoinMeanVincRegArea_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade das OSCs",
+    CO = "Centro-Oeste",
+    N = "Norte",
+    NE = "Nordeste",
+    S = "Sul",
+    SE = "Sudeste",
+    BR = "Brasil"
+   ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(CO, N, NE, S, SE, BR),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+```
+
+
+&nbsp;
+
+*Gráfico 8.3 - Número médio de vínculos de emprego em OSCs em diferentes finalidades de atuação - Todas as Organizações* 
+
+```{r plot MeanVincArea_all, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE}
+
+MeanVincArea <- readRDS("tables/MeanVincArea.RDS")
+
+# Gráficos:
+MeanVincArea %>%
+  ggplot(aes(x = tx_area_atuacao, y = Media_Vinculos)) +
+  geom_bar(stat="identity", color = "blue3", fill = "blue3") +
+  scale_x_discrete(labels = label_wrap(25)) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+```
+
+
+&nbsp;
+
+*Gráfico 8.4 - Número médio de vínculos de emprego em OSCs em diferentes finalidades de atuação - Apenas as organizações que têm vínculos* 
+
+```{r plot MeanVincArea_ComVinculo, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE}
+
+MeanVincArea_1mais <- readRDS("tables/MeanVincArea_1mais.RDS")
+
+# Gráfico:
+MeanVincArea_1mais %>%
+  ggplot(aes(x = tx_area_atuacao, y = Media_Vinculos)) +
+  geom_bar(stat="identity", color = "blue3", fill = "blue3") +
+  scale_x_discrete(labels = label_wrap(25)) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+```
+
+&nbsp;
+
+*Tabela 8.5 - Total e percentual do número de OSCs por regiões geográficas e por faixas de número de vínculos - Parte 1* 
+
+```{r table JoinFreqPorteUF_OSC_1, echo=FALSE, warning=FALSE}
+
+JoinFreqPorteUF_OSC <- readRDS("tables/JoinFreqPorteUF_OSC.RDS")
+
+# Formata tabelas:
+
+# Tabela 1:
+JoinFreqPorteUF_OSC %>%
+  select(Agregacao:PerDe5a9, TotalUF, PerUFArea) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide( c(Agregacao, UF_Regiao, UF_Nome) ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeRegUF = "",
+    SemVinculos = "N",
+    PerSemVinculos = "(%)",
+    De1a2 = "N",
+    PerDe1a2 = "(%)",
+    De3a4 = "N",
+    PerDe3a4 = "(%)",
+    De5a9 = "N",
+    PerDe5a9 = "(%)",
+    TotalUF = "N",
+    PerUFArea = "(%)"  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(SemVinculos, De1a2, De3a4, De5a9, TotalUF),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  fmt_number(
+    columns = c(PerSemVinculos, PerDe1a2, PerDe3a4, PerDe5a9, PerUFArea),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeRegUF )
+  ) %>%
+
+  # Torna as regiões mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeRegUF,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = html("Sem<br>pessoal"),
+    columns = c(SemVinculos, PerSemVinculos)
+  ) %>%
+
+  tab_spanner(
+    label = "1 a 2",
+    columns = c(De1a2, PerDe1a2)
+  ) %>%
+
+  tab_spanner(
+    label = "3 a 4",
+    columns = c(De3a4, PerDe3a4)
+  ) %>%
+
+  tab_spanner(
+    label = "5 a 9",
+    columns = c(De5a9, PerDe5a9)
+  ) %>%
+
+  tab_spanner(
+    label = "Total",
+    columns = c(TotalUF, PerUFArea)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Separadores para facilitar a visualização
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerSemVinculos, PerDe1a2, PerDe3a4, PerDe5a9, PerUFArea)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+```
+
+&nbsp;
+
+*Tabela 8.6 - Total e percentual do número de OSCs por regiões geográficas e por faixas de número de vínculos - Parte 2* 
+
+```{r table JoinFreqPorteUF_OSC_2, echo=FALSE, warning=FALSE}
+
+JoinFreqPorteUF_OSC <- readRDS("tables/JoinFreqPorteUF_OSC.RDS")
+
+# Formata tabelas:
+
+# Tabela 2:
+JoinFreqPorteUF_OSC %>%
+  select(Agregacao:NomeRegUF, De10a49:PerUFArea) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide( c(Agregacao, UF_Regiao, UF_Nome) ) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeRegUF = "",
+    De10a49 = "N",
+    PerDe10a49 = "(%)",
+    De50a99 = "N",
+    PerDe50a99 = "(%)",
+    De100a499 = "N",
+    PerDe100a499 = "(%)",
+    Mais500 = "N",
+    PerMais500 = "(%)",
+    TotalUF = "N",
+    PerUFArea = "(%)"  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(De10a49, De50a99, De100a499, Mais500, TotalUF),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  fmt_number(
+    columns = c(PerDe10a49,PerDe50a99, PerDe100a499, PerMais500, PerUFArea),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeRegUF )
+  ) %>%
+
+  # Torna as regiões mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeRegUF,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "10 a 49",
+    columns = c(De10a49, PerDe10a49)
+  ) %>%
+
+  tab_spanner(
+    label = "50 a 99",
+    columns = c(De50a99, PerDe50a99)
+  ) %>%
+
+  tab_spanner(
+    label = "100 a 499",
+    columns = c(De100a499, PerDe100a499)
+  ) %>%
+
+  tab_spanner(
+    label = "500 +",
+    columns = c(Mais500, PerMais500)
+  ) %>%
+
+  tab_spanner(
+    label = "Total",
+    columns = c(TotalUF, PerUFArea)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Separadores para facilitar a visualização
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(PerDe10a49, PerDe50a99, PerDe100a499, PerMais500, PerUFArea)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+```

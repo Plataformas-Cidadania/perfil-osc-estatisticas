@@ -1,0 +1,21 @@
+bookdown::gitbook:
+  css: style.css
+  config:
+    toc:
+      before: |
+        <li><a href="./">Relatório MOSC 2025</a></li>
+      after: |
+        <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+    edit: https://github.com/rstudio/bookdown-demo/edit/master/%s
+    download: ["word", "pdf", "epub"]
+bookdown::word_document2:
+  toc: true
+  fig_crop: true
+  includes:
+    in_header: header.tex
+bookdown::epub_book: default
+bookdown::pdf_book:
+  fig_crop: true
+  includes:
+    in_header: header.tex
+

@@ -1,0 +1,539 @@
+# Natureza Jurídica das OSCs {#cap-natjur}
+
+```{r setup cap natjur, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+```
+
+Esta seção trata sobre a natureza jurídica das Organizações da Sociedade Civil - OSCs. Foram utilizadas para calcular o total de OSCs do país as naturezas associações privadas, fundações privadas e organizações religiosas pessoas de direito privado sem fins lucrativos previstas no Código Civil – Lei n o 10.406/2002, bem como as organizações sociais assim qualificadas por Lei Federal, Estadual, Distrital ou Municipal.
+
+
+&nbsp;
+
+*Tabela 6.1 - OSCs por natureza jurídica, Grandes Regiões e UF - Número de OSC* 
+
+
+```{r table tblFreqOSC_NatJur_Freq, echo=FALSE, warning=FALSE}
+
+tblFreqOSC_NatJur <- readRDS("tables/tblFreqOSC_NatJur.RDS")
+
+# Formata tabela:
+# Tabela 1
+tblFreqOSC_NatJur %>%
+  select(UF_Nome:TotalFreq, Agregacao:UF_Ordem) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem, UF_Sigla)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    UF_Nome = html("Regiões e Unidades da Federação"),
+    Freq_3999 = "Associação Privada",
+    Freq_3069 = "Fundação Privada",
+    Freq_3220 = "Organização Religiosa",
+    Freq_3301 = "Organização Social (OS)",
+    TotalFreq = "Total"
+
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels()
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels(columns = c(TotalFreq))
+  ) %>%
+
+  fmt_number(
+    columns = c(Freq_3999, Freq_3069, Freq_3220, Freq_3301, TotalFreq),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !UF_Nome )
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Quantidade de OSCs",
+    columns = c(Freq_3999, Freq_3069, Freq_3220, Freq_3301, TotalFreq)
+  ) %>%
+
+  # Torna as regiões mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = UF_Nome,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+  
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Negrito
+    locations = cells_body(
+      columns = c(TotalFreq) )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil. Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Tabela 6.2 - OSCs por natureza jurídica, Grandes Regiões e UF - Porcentagem do Total* 
+
+```{r table tblFreqOSC_NatJur_Per, echo=FALSE, warning=FALSE}
+
+tblFreqOSC_NatJur <- readRDS("tables/tblFreqOSC_NatJur.RDS")
+
+# Formata tabela:
+# Tabela 2
+tblFreqOSC_NatJur %>%
+  select(UF_Nome, Per_3999:TotalPer, Agregacao:UF_Ordem) %>% 
+  
+  gt(locale = "pt-BR") %>%
+  
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem, UF_Sigla)) %>%
+  
+  # Nomes amigáveis das Colunas
+  cols_label(
+    UF_Nome = html("Regiões e Unidades da Federação"),
+    Per_3999 = "Associação Privada",
+    Per_3069 = "Fundação Privada",
+    Per_3220 = "Organização Religiosa",
+    Per_3301 = "Organização Social (OS)",
+    TotalPer = "Total",
+
+  ) %>%
+  
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels()
+  ) %>%
+  
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels(columns = c(TotalPer))
+  ) %>%
+  
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(Per_3999, Per_3069, Per_3220, Per_3301, TotalPer),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !UF_Nome )
+  ) %>%
+  
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Total (%)",
+    columns = c(Per_3999, Per_3069, Per_3220, Per_3301, TotalPer)
+  ) %>%
+
+  # Torna as regiões mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = UF_Nome,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+  
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Negrito
+    locations = cells_body(
+      columns = c(TotalPer) )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Tabela 6.3 - OSCs por natureza jurídica, Grandes Regiões e UF - Porcentagem na UF ou Região* 
+
+```{r table tblFreqOSC_NatJur_PerReg, echo=FALSE, warning=FALSE}
+
+tblFreqOSC_NatJur <- readRDS("tables/tblFreqOSC_NatJur.RDS")
+
+# Formata tabela:
+# Tabela 3
+tblFreqOSC_NatJur %>%
+  select(UF_Nome, PerReg_3999:UF_Ordem) %>% 
+  
+  gt(locale = "pt-BR") %>%
+  
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem, UF_Sigla)) %>%
+  
+  # Nomes amigáveis das Colunas
+  cols_label(
+    UF_Nome = html("Regiões e Unidades da Federação"),
+
+    PerReg_3999 = "Associação Privada",
+    PerReg_3069 = "Fundação Privada",
+    PerReg_3220 = "Organização Religiosa",
+    PerReg_3301 = "Organização Social (OS)",
+    TotalPerReg = "Total"
+    
+  ) %>%
+  
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels()
+  ) %>%
+  
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels(columns = c(TotalPerReg))
+  ) %>%
+  
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(PerReg_3999, PerReg_3069, PerReg_3220, PerReg_3301,
+                TotalPerReg),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !UF_Nome )
+  ) %>%
+  
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Região geográfica (%)",
+    columns = c(PerReg_3999, PerReg_3069, PerReg_3220, PerReg_3301, TotalPerReg)
+  ) %>%
+  
+  # Torna as regiões mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = UF_Nome,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+  
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Negrito
+    locations = cells_body(
+      columns = c(TotalPerReg) )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+
+```
+
+&nbsp;
+
+*Tabela 6.4 - OSCs, por natureza jurídica e finalidade - Número de OSC*
+
+```{r table JoinNatJurArea_OSC_NatJur, echo = FALSE} 
+
+JoinNatJurArea_OSC <- readRDS("tables/JoinNatJurArea_OSC.RDS")
+
+# Tabela 1
+JoinNatJurArea_OSC %>%
+  select(Agregacao:TotalNatJur) %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+
+    NatJur_3069 = "Fundação Privada",
+    NatJur_3220 = "Organização Religiosa",
+    NatJur_3301 = "Organização Social",
+    NatJur_3999 = "Associação Privada",
+    TotalNatJur = "Total"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  fmt_number(
+    columns = c(NatJur_3069, NatJur_3220, NatJur_3301, NatJur_3999, TotalNatJur),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Quantidade de OSCs",
+    columns = c(NatJur_3069, NatJur_3220, NatJur_3301, NatJur_3999, TotalNatJur)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+&nbsp;
+
+*Tabela 6.5 - OSCs, por natureza jurídica e finalidade - Porcentagem do Total*
+
+```{r table JoinNatJurArea_OSC_PerTot, echo = FALSE} 
+
+JoinNatJurArea_OSC <- readRDS("tables/JoinNatJurArea_OSC.RDS")
+
+# Tabela:
+JoinNatJurArea_OSC %>%
+  select(Agregacao:NomeAreaSubArea, PerTot_3069:PerTot_OSC) %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+
+    PerTot_3069 = "Fundação Privada",
+    PerTot_3220 = "Organização Religiosa",
+    PerTot_3301 = "Organização Social",
+    PerTot_3999 = "Associação Privada",
+    PerTot_OSC = "Total"
+    ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  fmt_number(
+    columns = c(PerTot_3069, PerTot_3220, PerTot_3301, PerTot_3999, PerTot_OSC),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+    ) %>% 
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Total (%)",
+    columns = c(PerTot_3069, PerTot_3220, PerTot_3301, PerTot_3999, PerTot_OSC)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Tabela 6.6 - OSCs, por natureza jurídica e finalidade - Porcentagem na UF ou Região*
+
+```{r table JoinNatJurArea_OSC_PerNatJur, echo = FALSE} 
+
+JoinNatJurArea_OSC <- readRDS("tables/JoinNatJurArea_OSC.RDS")
+
+# Tabela:
+JoinNatJurArea_OSC %>%
+  select(Agregacao:NomeAreaSubArea, PerNatJur_3069:PerTotalNatJur) %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+
+    PerNatJur_3069 = "Fundação Privada",
+    PerNatJur_3220 = "Organização Religiosa",
+    PerNatJur_3301 = "Organização Social",
+    PerNatJur_3999 = "Associação Privada",
+    PerTotalNatJur = "Total"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+
+  fmt_number(
+    columns = c(PerNatJur_3069, PerNatJur_3220, PerNatJur_3301, PerNatJur_3999,
+                PerTotalNatJur),
+    decimals = 1,
+    dec_mark = ",",
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+
+    tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+    ) %>% 
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Natureza jurídica (%)",
+    columns = c(PerNatJur_3069, PerNatJur_3220, PerNatJur_3301, PerNatJur_3999,
+                PerTotalNatJur)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+

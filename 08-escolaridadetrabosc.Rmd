@@ -1,0 +1,673 @@
+# Escolaridade do Pessoal Ocupado {#cap-escolaridadetrab}
+
+```{r setup cap escolaridadetrabosc, echo=FALSE, warning=FALSE, message=FALSE}
+library(gt)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+```
+
+Esta seção apresenta dados sobre a escolaridade de trabalhadores e trabalhadoras com vínculos de trabalho formais das Organizações da Sociedade Civil (OSCs).
+
+&nbsp;
+
+*Tabela 9.1 - Escolaridade dos vínculos* 
+
+```{r table NVincEsc_OSC, echo=FALSE, warning=FALSE}
+
+NVincEsc_OSC <- readRDS("tables/NVincEsc_OSC.RDS")
+
+# Formata tabela:
+NVincEsc_OSC %>%
+  gt(locale = "pt-BR") %>%
+  # Nomes amigáveis das Colunas
+  cols_label(
+    Escolaridade = "Escolaridade",
+    N = "N",
+    Per_Vinculos = "(%)"
+    ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(N),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Per_Vinculos),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !Escolaridade )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+
+
+```
+
+
+&nbsp;
+
+*Tabela 9.2 - Escolaridade dos vínculos, por Grande Região e UF* 
+
+
+```{r table NVincEscUF_OSC, echo=FALSE, warning=FALSE}
+
+NVincEscUF_OSC <- readRDS("tables/NVincEscUF_OSC.RDS")
+
+# Formata tabela:
+NVincEscUF_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, UF_Ordem)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeRegUF = "Região geográfica",
+
+    Soma_Vinculos_SemSup = "N",
+    Per_Vinculos_SemSup = "(%)",
+
+    Soma_Vinculos_Sup = "N",
+    Per_Vinculos_Sup = "(%)",
+
+    Soma_Vinculos = "N",
+    Per_Vinculos = "(%)",
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(Soma_Vinculos_SemSup, Soma_Vinculos_Sup, Soma_Vinculos),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Per_Vinculos_SemSup, Per_Vinculos_Sup, Per_Vinculos),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeRegUF )
+  ) %>%
+
+  # Torna as UFs mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeRegUF,
+      rows = Agregacao ==  "UF")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (regiões) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "UF")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(Soma_Vinculos_SemSup, Per_Vinculos_SemSup)
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(Soma_Vinculos_Sup, Per_Vinculos_Sup)
+  ) %>%
+
+
+  tab_spanner(
+    label = "Total",
+    columns = c(Soma_Vinculos, Per_Vinculos)
+  ) %>%
+
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_spanners()
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(Per_Vinculos_SemSup, Per_Vinculos_Sup, Per_Vinculos)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+&nbsp;
+
+*Tabela 9.3 - Escolaridade dos vínculos por Área de atuação* 
+
+
+```{r table NVincAreaSubAreaEsc_OSC, echo=FALSE, warning=FALSE}
+
+NVincAreaSubAreaEsc_OSC <- readRDS("tables/NVincAreaSubAreaEsc_OSC.RDS")
+
+# Formata tabela:
+NVincAreaSubAreaEsc_OSC %>%
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeAreaSubArea = "Finalidade de atuação",
+    Soma_Vinculos_SemSup = "N",
+    Per_Vinculos_SemSup = "(%)",
+    Soma_Vinculos_Sup = "N",
+    Per_Vinculos_Sup = "(%)",
+    Soma_Vinculos = "N",
+    Per_Vinculos = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(Soma_Vinculos_SemSup, Soma_Vinculos_Sup, Soma_Vinculos),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(Per_Vinculos_SemSup, Per_Vinculos_Sup, Per_Vinculos),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeAreaSubArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeAreaSubArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(Soma_Vinculos_SemSup, Per_Vinculos_SemSup)
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(Soma_Vinculos_Sup, Per_Vinculos_Sup)
+  ) %>%
+
+
+  tab_spanner(
+    label = "Total",
+    columns = c(Soma_Vinculos, Per_Vinculos)
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(Per_Vinculos_SemSup, Per_Vinculos_Sup, Per_Vinculos)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+
+&nbsp;
+
+*Tabela 9.4 - Escolaridade dos vínculos por Área de atuação e Região (parte 1)* 
+
+
+```{r table NVincEscAreaUF_OSC_1, echo=FALSE, warning=FALSE}
+
+NVincEscAreaUF_OSC <- readRDS("tables/NVincEscAreaUF_OSC.RDS")
+
+# Formata tabela:
+# Tabela 1:
+NVincEscAreaUF_OSC %>%
+  select(Agregacao:CO_Per_Vinculos_Sup) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeArea = "Finalidade de atuação",
+    N_Soma_Vinculos_SemSup = "N",
+    N_Per_Vinculos_SemSup = "(%)",
+    N_Soma_Vinculos_Sup = "N",
+    N_Per_Vinculos_Sup = "(%)",
+    NE_Soma_Vinculos_SemSup = "N",
+    NE_Per_Vinculos_SemSup = "(%)",
+    NE_Soma_Vinculos_Sup = "N",
+    NE_Per_Vinculos_Sup = "(%)",
+    CO_Soma_Vinculos_SemSup = "N",
+    CO_Per_Vinculos_SemSup = "(%)",
+    CO_Soma_Vinculos_Sup = "N",
+    CO_Per_Vinculos_Sup = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(N_Soma_Vinculos_SemSup, N_Soma_Vinculos_Sup,
+                NE_Soma_Vinculos_SemSup, NE_Soma_Vinculos_Sup,
+                CO_Soma_Vinculos_SemSup, CO_Soma_Vinculos_Sup),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(N_Per_Vinculos_SemSup, N_Per_Vinculos_Sup,
+                NE_Per_Vinculos_SemSup, NE_Per_Vinculos_Sup,
+                CO_Per_Vinculos_SemSup, CO_Per_Vinculos_Sup),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+  # Norte
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(N_Soma_Vinculos_SemSup, N_Per_Vinculos_SemSup),
+    id = "span_N_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(N_Soma_Vinculos_Sup, N_Per_Vinculos_Sup),
+    id = "span_N_Sup"
+  ) %>%
+
+  tab_spanner(
+    label = "Norte",
+    spanners  = c("span_N_SemSup", "span_N_Sup")
+  ) %>%
+
+
+  # Nordeste
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(NE_Soma_Vinculos_SemSup, NE_Per_Vinculos_SemSup),
+    id = "span_NE_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(NE_Soma_Vinculos_Sup, NE_Per_Vinculos_Sup),
+    id = "span_NE_Sup"
+  ) %>%
+
+  tab_spanner(
+    label = "Nordeste",
+    spanners  = c("span_NE_SemSup", "span_NE_Sup")
+  ) %>%
+
+  # Centro-Oeste
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(CO_Soma_Vinculos_SemSup, CO_Per_Vinculos_SemSup),
+    id = "span_CO_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(CO_Soma_Vinculos_Sup, CO_Per_Vinculos_Sup),
+    id = "span_CO_Sup"
+  ) %>%
+
+  tab_spanner(
+    label = "Centro-Oeste",
+    spanners  = c("span_CO_SemSup", "span_CO_Sup")
+  ) %>%
+
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(N_Per_Vinculos_Sup, NE_Per_Vinculos_Sup, CO_Per_Vinculos_Sup)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+```
+
+
+
+&nbsp;
+
+*Tabela 9.5 - Escolaridade dos vínculos por Área de atuação e Região (parte 2)* 
+
+
+```{r table NVincEscAreaUF_OSC_2, echo=FALSE, warning=FALSE}
+
+NVincEscAreaUF_OSC <- readRDS("tables/NVincEscAreaUF_OSC.RDS")
+
+# Formata tabela:
+# Tabela 2:
+NVincEscAreaUF_OSC %>%
+  select(Agregacao:NomeArea, S_Soma_Vinculos_SemSup:SE_Per_Vinculos_Sup) %>%
+
+  gt(locale = "pt-BR") %>%
+
+  # Esta coluna não aparece nos dados, só serve para diferenciar as regiões
+  cols_hide(c(Agregacao, OrdemArea)) %>%
+
+  # Nomes amigáveis das Colunas
+  cols_label(
+    NomeArea = "Finalidade de atuação",
+    S_Soma_Vinculos_SemSup = "N",
+    S_Per_Vinculos_SemSup = "(%)",
+    S_Soma_Vinculos_Sup = "N",
+    S_Per_Vinculos_Sup = "(%)",
+    SE_Soma_Vinculos_SemSup = "N",
+    SE_Per_Vinculos_SemSup = "(%)",
+    SE_Soma_Vinculos_Sup = "N",
+    SE_Per_Vinculos_Sup = "(%)"
+  ) %>%
+
+  # Deixa o Nome das Colunas em negrito e centralizado.
+  tab_style(
+    style = cell_text(align = "center", weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+
+  # Formata os números da tabela
+  # Inteiros:
+  fmt_number(
+    columns = c(S_Soma_Vinculos_SemSup, S_Soma_Vinculos_Sup,
+                SE_Soma_Vinculos_SemSup, SE_Soma_Vinculos_Sup),
+    sep_mark = ".",
+    decimals = 0
+  ) %>%
+
+  # Decimais
+  fmt_number(
+    columns = c(S_Per_Vinculos_SemSup, S_Per_Vinculos_Sup,
+                SE_Per_Vinculos_SemSup, SE_Per_Vinculos_Sup),
+    sep_mark = ".",
+    dec_mark = ",",
+    decimals = 1
+  ) %>%
+
+  # Centraliza os dados das tabelas
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(
+      columns = !NomeArea )
+  ) %>%
+
+  # Torna as Áreas de Atuação mais destacadas
+  tab_style(
+    style = cell_text(indent = px(20)), # Intentação
+    locations = cells_body(
+      columns = NomeArea,
+      rows = Agregacao ==  "SubArea")
+  ) %>%
+  
+  tab_style(
+    style = cell_text(weight = "bold"), # Subtotais (Areas) em negrito
+    locations = cells_body(
+      rows = Agregacao !=  "SubArea")
+  ) %>%
+
+  # Cria grupos de variáveis (spanners)
+
+  # Sul
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(S_Soma_Vinculos_SemSup, S_Per_Vinculos_SemSup),
+    id = "span_S_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(S_Soma_Vinculos_Sup, S_Per_Vinculos_Sup),
+    id = "span_S_Sup"
+  ) %>%
+
+  tab_spanner(
+    label = "Sul",
+    spanners  = c("span_S_SemSup", "span_S_Sup")
+  ) %>%
+
+  # Sudeste
+  tab_spanner(
+    label = "Sem nível superior",
+    columns = c(SE_Soma_Vinculos_SemSup, SE_Per_Vinculos_SemSup),
+    id = "span_SE_SemSup"
+  ) %>%
+
+  tab_spanner(
+    label = "Com nível superior",
+    columns = c(SE_Soma_Vinculos_Sup, SE_Per_Vinculos_Sup),
+    id = "span_SE_Sup"
+  ) %>%
+
+  tab_spanner(
+    label = "Sudeste",
+    spanners  = c("span_SE_SemSup", "span_SE_Sup")
+  )  %>%
+  # Coloca linha separando Spanners
+  tab_style(
+    style = cell_borders(
+      sides = c("right"),
+      style = "dashed",
+      weight = px(1)),
+    locations = cells_body(
+      columns = c(S_Per_Vinculos_Sup, SE_Per_Vinculos_Sup)
+    )
+  ) %>% 
+  
+  # Fonte dos dados
+  tab_source_note(
+    source_note = md("**Nota:** Dados atualizados até Fevereiro 2025.<br>
+                     **Fonte:** Mapa das Organizações da Sociedade Civil.<br>
+                     Elaboração do IPEA.")
+  )
+
+
+
+```
+
+
+&nbsp;
+
+*Gráfico 9.1 - Pessoal ocupado com nível superior por região e área* 
+
+
+```{r plot NVincEscAreaReg_OSC, fig.height = 5, fig.width = 7, echo=FALSE, warning=FALSE, message=FALSE}
+
+NVincEscAreaReg_OSC <- readRDS("tables/NVincEscAreaReg_OSC.RDS")
+
+# Gráfico
+NVincEscAreaReg_OSC %>%
+  ggplot(aes(x = tx_area_atuacao, y = Per_Sup, fill = UF_Regiao)) +
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_discrete(labels = label_wrap(25)) +
+  ylim(0, 0.7) + 
+  geom_text(
+    aes(
+      label = format(round(Per_Sup * 100, 1), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = Per_Sup
+    ),
+    position = position_dodge(width=0.9),
+    vjust=0.25,
+    hjust = -0.3,
+    angle = 90) +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust=1),
+    axis.title.y = element_blank()
+    )
+
+
+```
+
+
+
+&nbsp;
+
+*Gráfico 9.2 - Pessoal ocupado com nível superior área (BR)* 
+
+
+```{r plot NVincSupBR, fig.height = 4, fig.width = 7, echo=FALSE, warning=FALSE, message=FALSE}
+
+NVincSupBR <- readRDS("tables/NVincSupBR.RDS")
+
+# Gráfico
+NVincSupBR %>%
+  ggplot(aes(x = tx_area_atuacao, y = Per_Sup)) +
+  geom_bar(stat="identity", color="black", fill = "blue",
+           position=position_dodge())+
+  theme_minimal() +
+  ylim(0, 0.65) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_discrete(labels = label_wrap(25)) +
+  geom_text(
+    aes(
+      label = format(round(Per_Sup * 100, 1), big.mark = ".",
+                     decimal.mark = ",",
+                     scientific = FALSE),
+      y = Per_Sup
+    ),
+    position = position_dodge(width=0.9),
+    vjust= -0.25) +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust=1),
+    axis.title.y = element_blank()
+  )
+
+```
+

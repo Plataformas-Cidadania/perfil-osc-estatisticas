@@ -1,0 +1,14 @@
+cap-apresentacao
+cap-intro
+cap-metodologia
+fonte-de-dados-e-metodologia-de-identificação-das-oscs
+o-algoritmo-de-identificação-das-oscs
+cap-territorio
+cap-area-atuacao
+cap-natjur
+cap-mercadotrab
+cap-porteosc
+cap-escolaridadetrab
+cap-remuneracao
+cap-transferenciasosc
+cap-evolucaoquanti
