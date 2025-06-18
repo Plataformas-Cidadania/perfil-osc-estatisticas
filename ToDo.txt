@@ -1,0 +1,10 @@
+To do:
+
+
+	-Substituir em todos os scripts a fonte de dados do arquivo local (RDS) por arquivos do BD MOSC
+
+	-Corrigir o Bug da área de atuação:
+		-Em tb_area_atuacao é comum que uma OSC tenha apenas a área de atuação e não a sub área. Colocar nesses casos a subarea como "subarea não informada"
+
+	-Substitui as linhas de busca do arquivo RDS "RAIS 2022" por uma busca no banco de dados
+

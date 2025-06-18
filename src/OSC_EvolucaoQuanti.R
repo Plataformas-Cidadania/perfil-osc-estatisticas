@@ -47,18 +47,41 @@ library(dbplyr)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Concecta aos bancos de dados do MOSC ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Chaves do banco de dados
+print(keys)
+assert_that(file.exists(keys))
+
+# Concecta aos bancos de dados do MOSC:
+source("src/generalFunctions/postCon.R") 
+conexao_mosc <- postCon(keys, Con_options = "-c search_path=osc")
+
+dbIsValid(conexao_mosc)
+
+rm(postCon)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Leitura de Dados ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # Informações sobre as OSC ativas:
-tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+# tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+tb_osc <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_osc;")
 
 # Localização das OSC:
-tb_localicazao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+# tb_localizacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+tb_localizacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_localizacao;")
 
 # Dados Gerais OSC:
-tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+# tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+tb_dados_gerais <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_dados_gerais;")
+
+# Áreas de Atuaçãpo
+# tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
+tb_area_atuacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_area_atuacao;")
 
 # Dados básicos das Unidades Federativas:
 UFs <- fread("data/UFs.csv", encoding = "Latin-1") %>%
@@ -67,8 +90,6 @@ UFs <- fread("data/UFs.csv", encoding = "Latin-1") %>%
 # Informações Básicas dos Municípios:
 Municipios <- fread("data/Municipios.csv", encoding = "Latin-1")
 
-# Áreas de Atuaçãpo
-tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
 
 dc_area_subarea_atuacao <- fread("data/dc_area_subarea_atuacao.csv",
                                  encoding = "Latin-1") %>%
@@ -110,7 +131,6 @@ rm(tb_area_atuacao)
 
 # names(tb_dados_gerais)
 
-
 # OSC do banco (não só as ativas)
 OscAtiva <- tb_dados_gerais %>%
   # Adiciona a variável de OSC ativa
@@ -145,7 +165,7 @@ OscAtiva <- tb_dados_gerais %>%
          ) %>%
   # Insere dados de município e UF.
   left_join(
-    select(tb_localicazao,
+    select(tb_localizacao,
            id_osc, cd_municipio),
     by = "id_osc"
   ) %>%
@@ -161,7 +181,7 @@ OscAtiva <- tb_dados_gerais %>%
 
 # table(OscAtiva$nr_ano_fechamento_osc, useNA = "always")
 
-rm(tb_osc, tb_dados_gerais, tb_localicazao)
+rm(tb_osc, tb_dados_gerais, tb_localizacao)
 rm(Municipios, UFs, area_atuacao_clean)
 
 
@@ -209,7 +229,8 @@ for (i in seq_along(QtdAno_OSC$Ano)) {
 rm(i)
 
 QtdAno_OSC <- QtdAno_OSC %>%
-  mutate(Crescimento = ((N_OSC/lag(N_OSC) ) - 1) * 100 )
+  mutate(Crescimento = ( ( N_OSC/dplyr::lag(N_OSC) ) - 1) * 100 )
+
 
 # Checa dados
 # View(QtdAno_OSC)
@@ -675,6 +696,7 @@ PerOSCDecadaFund <- OscAtiva %>%
     PerDe2000a2010 = (De2000a2010 / sum(De2000a2010) ) * 100,
     PerDe2010a2020 = (De2010a2020 / sum(De2010a2020) ) * 100,
     PerDe2021a2024 = (De2021a2024 / sum(De2021a2024) ) * 100,
+    UF_Regiao = ifelse(UF_Regiao == "SD", "SE", UF_Regiao)
   ) %>%
   select(
     UF_Regiao, N_OSC,

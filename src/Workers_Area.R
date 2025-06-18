@@ -18,10 +18,12 @@ bookdown::render_book(output_format = bookdown::pdf_book(fig_crop = FALSE))
 
 # Resolve problemas de conexão:
 # Conta murilooj@gmail.com
-rsconnect::connectUser(server = 'bookdown.org')
+rsconnect::connectUser(account = "mosc_ipea", server = 'bookdown.org')
 
 # Publica no site
-bookdown::publish_book(render = "local")
+bookdown::publish_book(account = "mosc_ipea", 
+                       server = 'bookdown.org', 
+                       render = "local")
 
 
 # Tentativas de resolver a renderização LateX/PDF (ainda não bem sucedida)

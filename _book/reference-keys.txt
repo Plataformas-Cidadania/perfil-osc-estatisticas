@@ -12,3 +12,4 @@ cap-escolaridadetrab
 cap-remuneracao
 cap-transferenciasosc
 cap-evolucaoquanti
+cap-referencias

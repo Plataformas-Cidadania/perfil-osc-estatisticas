@@ -47,18 +47,42 @@ library(dbplyr)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Concecta aos bancos de dados do MOSC ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Chaves do banco de dados
+assert_that(file.exists(keys))
+
+# Concecta aos bancos de dados do MOSC:
+source("src/generalFunctions/postCon.R") 
+conexao_mosc <- postCon(keys, Con_options = "-c search_path=osc")
+
+dbIsValid(conexao_mosc)
+
+rm(postCon)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Leitura de Dados ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # Informações sobre as OSC ativas:
-tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+# tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+tb_osc <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_osc;")
 
 # Localização das OSC:
-tb_localicazao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+# tb_localizacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+tb_localizacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_localizacao;")
 
 # Dados Gerais OSC:
-tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+# tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+tb_dados_gerais <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_dados_gerais;")
+
+# Áreas de Atuaçãpo
+# tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
+tb_area_atuacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_area_atuacao;")
+
+dados_RAIS <- readRDS("temp/RAIS/RAIS_2022.RDS")
 
 # Dados básicos das Unidades Federativas:
 UFs <- fread("data/UFs.csv", encoding = "Latin-1") %>%
@@ -67,15 +91,10 @@ UFs <- fread("data/UFs.csv", encoding = "Latin-1") %>%
 # Informações Básicas dos Municípios:
 Municipios <- fread("data/Municipios.csv", encoding = "Latin-1")
 
-# Áreas de Atuaçãpo
-tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
-
 dc_area_subarea_atuacao <- fread("data/dc_area_subarea_atuacao.csv",
                                  encoding = "Latin-1") %>%
   mutate(OrdemArea = paste0(str_pad(cd_area_atuacao, 2, pad = "0"), "_",
                             str_pad(cd_subarea_atuacao, 2, pad = "0") ) )
-
-dados_RAIS <- readRDS("temp/RAIS/RAIS_2022.RDS")
 
 OrdemUF <- fread("data/OrdemUF.csv", encoding = "Latin-1")
 
@@ -288,7 +307,7 @@ OscAtiva <- tb_dados_gerais %>%
 
   # Insere dados de município e UF.
   left_join(
-    select(tb_localicazao,
+    select(tb_localizacao,
            id_osc, cd_municipio),
     by = "id_osc"
   ) %>%
@@ -302,7 +321,7 @@ OscAtiva <- tb_dados_gerais %>%
 
 # names(OscAtiva)
 
-rm(tb_osc, tb_dados_gerais, tb_localicazao)
+rm(tb_osc, tb_dados_gerais, tb_localizacao)
 rm(Municipios, UFs, area_atuacao_clean, ResumoRais)
 
 
@@ -789,8 +808,8 @@ NVincEscAreaUF_OSC <- OscAtiva %>%
                       CO_Soma_Vinculos_Sup = sum(CO_Soma_Vinculos_Sup, na.rm = TRUE),
                       S_Soma_Vinculos_SemSup = sum(S_Soma_Vinculos_SemSup, na.rm = TRUE),
                       S_Soma_Vinculos_Sup = sum(S_Soma_Vinculos_Sup, na.rm = TRUE),
-                      SE_Soma_Vinculos_SemSup = sum(SE_Soma_Vinculos_SemSup, na.rm = TRUE),
-                      SE_Soma_Vinculos_Sup = sum(SE_Soma_Vinculos_Sup, na.rm = TRUE),
+                      SD_Soma_Vinculos_SemSup = sum(SD_Soma_Vinculos_SemSup, na.rm = TRUE),
+                      SD_Soma_Vinculos_Sup = sum(SD_Soma_Vinculos_Sup, na.rm = TRUE),
 
                       tempOrdemArea = mean(tempOrdemArea, na.rm = TRUE),
                       Agregacao = "Area",
@@ -806,8 +825,8 @@ NVincEscAreaUF_OSC <- OscAtiva %>%
                       CO_Soma_Vinculos_Sup = sum(CO_Soma_Vinculos_Sup, na.rm = TRUE),
                       S_Soma_Vinculos_SemSup = sum(S_Soma_Vinculos_SemSup, na.rm = TRUE),
                       S_Soma_Vinculos_Sup = sum(S_Soma_Vinculos_Sup, na.rm = TRUE),
-                      SE_Soma_Vinculos_SemSup = sum(SE_Soma_Vinculos_SemSup, na.rm = TRUE),
-                      SE_Soma_Vinculos_Sup = sum(SE_Soma_Vinculos_Sup, na.rm = TRUE),
+                      SD_Soma_Vinculos_SemSup = sum(SD_Soma_Vinculos_SemSup, na.rm = TRUE),
+                      SD_Soma_Vinculos_Sup = sum(SD_Soma_Vinculos_Sup, na.rm = TRUE),
 
                       NomeArea = "Total",
                       OrdemArea = "00",
@@ -831,8 +850,8 @@ NVincEscAreaUF_OSC <- OscAtiva %>%
     CO_Per_Vinculos_Sup = (CO_Soma_Vinculos_Sup / TotalVinculos) * 100,
     S_Per_Vinculos_SemSup = (S_Soma_Vinculos_SemSup / TotalVinculos) * 100,
     S_Per_Vinculos_Sup = (S_Soma_Vinculos_Sup / TotalVinculos) * 100,
-    SE_Per_Vinculos_SemSup = (SE_Soma_Vinculos_SemSup / TotalVinculos) * 100,
-    SE_Per_Vinculos_Sup = (SE_Soma_Vinculos_Sup / TotalVinculos) * 100
+    SD_Per_Vinculos_SemSup = (SD_Soma_Vinculos_SemSup / TotalVinculos) * 100,
+    SD_Per_Vinculos_Sup = (SD_Soma_Vinculos_Sup / TotalVinculos) * 100
 
     ) %>%
 
@@ -842,7 +861,7 @@ NVincEscAreaUF_OSC <- OscAtiva %>%
     NE_Soma_Vinculos_SemSup, NE_Per_Vinculos_SemSup, NE_Soma_Vinculos_Sup, NE_Per_Vinculos_Sup,
     CO_Soma_Vinculos_SemSup, CO_Per_Vinculos_SemSup, CO_Soma_Vinculos_Sup, CO_Per_Vinculos_Sup,
     S_Soma_Vinculos_SemSup, S_Per_Vinculos_SemSup, S_Soma_Vinculos_Sup, S_Per_Vinculos_Sup,
-    SE_Soma_Vinculos_SemSup, SE_Per_Vinculos_SemSup, SE_Soma_Vinculos_Sup, SE_Per_Vinculos_Sup
+    SD_Soma_Vinculos_SemSup, SD_Per_Vinculos_SemSup, SD_Soma_Vinculos_Sup, SD_Per_Vinculos_Sup
     ) %>%
   arrange(OrdemArea)
 
@@ -880,10 +899,10 @@ NVincEscAreaUF_OSC %>%
     S_Per_Vinculos_SemSup = "(%)",
     S_Soma_Vinculos_Sup = "N",
     S_Per_Vinculos_Sup = "(%)",
-    SE_Soma_Vinculos_SemSup = "N",
-    SE_Per_Vinculos_SemSup = "(%)",
-    SE_Soma_Vinculos_Sup = "N",
-    SE_Per_Vinculos_Sup = "(%)"
+    SD_Soma_Vinculos_SemSup = "N",
+    SD_Per_Vinculos_SemSup = "(%)",
+    SD_Soma_Vinculos_Sup = "N",
+    SD_Per_Vinculos_Sup = "(%)"
   ) %>%
 
   # Deixa o Nome das Colunas em negrito e centralizado.
@@ -899,7 +918,7 @@ NVincEscAreaUF_OSC %>%
                 NE_Soma_Vinculos_SemSup, NE_Soma_Vinculos_Sup,
                 CO_Soma_Vinculos_SemSup, CO_Soma_Vinculos_Sup,
                 S_Soma_Vinculos_SemSup, S_Soma_Vinculos_Sup,
-                SE_Soma_Vinculos_SemSup, SE_Soma_Vinculos_Sup),
+                SD_Soma_Vinculos_SemSup, SD_Soma_Vinculos_Sup),
     sep_mark = ".",
     decimals = 0
   ) %>%
@@ -910,7 +929,7 @@ NVincEscAreaUF_OSC %>%
                 NE_Per_Vinculos_SemSup, NE_Per_Vinculos_Sup,
                 CO_Per_Vinculos_SemSup, CO_Per_Vinculos_Sup,
                 S_Per_Vinculos_SemSup, S_Per_Vinculos_Sup,
-                SE_Per_Vinculos_SemSup, SE_Per_Vinculos_Sup),
+                SD_Per_Vinculos_SemSup, SD_Per_Vinculos_Sup),
     sep_mark = ".",
     dec_mark = ",",
     decimals = 1
@@ -1008,19 +1027,19 @@ tab_spanner(
   # Sudeste
   tab_spanner(
     label = "Sem nível superior",
-    columns = c(SE_Soma_Vinculos_SemSup, SE_Per_Vinculos_SemSup),
-    id = "span_SE_SemSup"
+    columns = c(SD_Soma_Vinculos_SemSup, SD_Per_Vinculos_SemSup),
+    id = "span_SD_SemSup"
   ) %>%
 
   tab_spanner(
     label = "Com nível superior",
-    columns = c(SE_Soma_Vinculos_Sup, SE_Per_Vinculos_Sup),
-    id = "span_SE_Sup"
+    columns = c(SD_Soma_Vinculos_Sup, SD_Per_Vinculos_Sup),
+    id = "span_SD_Sup"
   ) %>%
 
   tab_spanner(
     label = "Sudeste",
-    spanners  = c("span_SE_SemSup", "span_SE_Sup")
+    spanners  = c("span_SD_SemSup", "span_SD_Sup")
   )  %>%
   # Coloca linha separando Spanners
   tab_style(
@@ -1030,7 +1049,7 @@ tab_spanner(
       weight = px(1)),
     locations = cells_body(
       columns = c(N_Per_Vinculos_Sup, NE_Per_Vinculos_Sup, CO_Per_Vinculos_Sup,
-                  S_Per_Vinculos_Sup, SE_Per_Vinculos_Sup)
+                  S_Per_Vinculos_Sup, SD_Per_Vinculos_Sup)
     )
   )
 
@@ -1175,7 +1194,7 @@ NVincEscAreaUF_OSC %>%
 
 # Tabela 2:
 NVincEscAreaUF_OSC %>%
-  select(Agregacao:NomeArea, S_Soma_Vinculos_SemSup:SE_Per_Vinculos_Sup) %>%
+  select(Agregacao:NomeArea, S_Soma_Vinculos_SemSup:SD_Per_Vinculos_Sup) %>%
 
   gt(locale = "pt-BR") %>%
 
@@ -1189,10 +1208,10 @@ NVincEscAreaUF_OSC %>%
     S_Per_Vinculos_SemSup = "(%)",
     S_Soma_Vinculos_Sup = "N",
     S_Per_Vinculos_Sup = "(%)",
-    SE_Soma_Vinculos_SemSup = "N",
-    SE_Per_Vinculos_SemSup = "(%)",
-    SE_Soma_Vinculos_Sup = "N",
-    SE_Per_Vinculos_Sup = "(%)"
+    SD_Soma_Vinculos_SemSup = "N",
+    SD_Per_Vinculos_SemSup = "(%)",
+    SD_Soma_Vinculos_Sup = "N",
+    SD_Per_Vinculos_Sup = "(%)"
   ) %>%
 
   # Deixa o Nome das Colunas em negrito e centralizado.
@@ -1205,7 +1224,7 @@ NVincEscAreaUF_OSC %>%
   # Inteiros:
   fmt_number(
     columns = c(S_Soma_Vinculos_SemSup, S_Soma_Vinculos_Sup,
-                SE_Soma_Vinculos_SemSup, SE_Soma_Vinculos_Sup),
+                SD_Soma_Vinculos_SemSup, SD_Soma_Vinculos_Sup),
     sep_mark = ".",
     decimals = 0
   ) %>%
@@ -1213,7 +1232,7 @@ NVincEscAreaUF_OSC %>%
   # Decimais
   fmt_number(
     columns = c(S_Per_Vinculos_SemSup, S_Per_Vinculos_Sup,
-                SE_Per_Vinculos_SemSup, SE_Per_Vinculos_Sup),
+                SD_Per_Vinculos_SemSup, SD_Per_Vinculos_Sup),
     sep_mark = ".",
     dec_mark = ",",
     decimals = 1
@@ -1257,19 +1276,19 @@ NVincEscAreaUF_OSC %>%
   # Sudeste
   tab_spanner(
     label = "Sem nível superior",
-    columns = c(SE_Soma_Vinculos_SemSup, SE_Per_Vinculos_SemSup),
-    id = "span_SE_SemSup"
+    columns = c(SD_Soma_Vinculos_SemSup, SD_Per_Vinculos_SemSup),
+    id = "span_SD_SemSup"
   ) %>%
 
   tab_spanner(
     label = "Com nível superior",
-    columns = c(SE_Soma_Vinculos_Sup, SE_Per_Vinculos_Sup),
-    id = "span_SE_Sup"
+    columns = c(SD_Soma_Vinculos_Sup, SD_Per_Vinculos_Sup),
+    id = "span_SD_Sup"
   ) %>%
 
   tab_spanner(
     label = "Sudeste",
-    spanners  = c("span_SE_SemSup", "span_SE_Sup")
+    spanners  = c("span_SD_SemSup", "span_SD_Sup")
   )  %>%
   # Coloca linha separando Spanners
   tab_style(
@@ -1278,7 +1297,7 @@ NVincEscAreaUF_OSC %>%
       style = "dashed",
       weight = px(1)),
     locations = cells_body(
-      columns = c(S_Per_Vinculos_Sup, SE_Per_Vinculos_Sup)
+      columns = c(S_Per_Vinculos_Sup, SD_Per_Vinculos_Sup)
     )
   )
 

@@ -50,20 +50,40 @@ library(dbplyr)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Concecta aos bancos de dados do MOSC ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Chaves do banco de dados
+print(keys)
+assert_that(file.exists(keys))
+
+# Concecta aos bancos de dados do MOSC:
+source("src/generalFunctions/postCon.R") 
+conexao_mosc <- postCon(keys, Con_options = "-c search_path=osc")
+
+dbIsValid(conexao_mosc)
+
+rm(postCon)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Leitura de Dados ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Informações sobre as OSC ativas:
-tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+# tb_osc <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_osc.RDS")
+tb_osc <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_osc;")
 
 # Localização das OSC:
-tb_localicazao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+# tb_localizacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_localizacao.RDS")
+tb_localizacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_localizacao;")
 
 # Dados Gerais OSC:
-tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+# tb_dados_gerais <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_dados_gerais.RDS")
+tb_dados_gerais <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_dados_gerais;")
 
 # Áreas de Atuaçãpo
-tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
+# tb_area_atuacao <- readRDS("temp/dataset/2025-03-06 extract-homolog/tb_area_atuacao.RDS")
+tb_area_atuacao <- dbGetQuery(conexao_mosc, "SELECT * FROM tb_area_atuacao;")
 
 dc_area_subarea_atuacao <- fread("data/dc_area_subarea_atuacao.csv",
                                  encoding = "Latin-1")
@@ -109,7 +129,7 @@ OSCAtiva_AreaAtuacao <- tb_area_atuacao %>%
   dplyr::filter(bo_osc_ativa == TRUE) %>%
   # Adiciona município das OSC
   left_join(
-    select(tb_localicazao,
+    select(tb_localizacao,
            id_osc, cd_municipio),
     by = "id_osc"
   ) %>%
@@ -119,7 +139,7 @@ OSCAtiva_AreaAtuacao <- tb_area_atuacao %>%
   select(id_osc, cd_area_atuacao, cd_subarea_atuacao, UF_Id, cd_municipio)
 
 # acho que posso já retirar esses bancos:
-rm(tb_area_atuacao, tb_osc, tb_localicazao)
+rm(tb_area_atuacao, tb_osc, tb_localizacao)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
