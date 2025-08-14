@@ -1,0 +1,31 @@
+To do:
+
+	-Ajeitar nomes da capa
+	-Inserir número de páginas
+	-Quebra de página para deixar o índice em uma página separada
+	-Quebra de página antes de cada capítulo
+	-Depois do índice, justificar texto e colocar recuo de parágrafo
+	-Colocar quebra de página e título das referências
+	-Ajeitar listas numeradas do capítulo 3
+	-Centralizar todos os:
+		-Títulos de tabelas e figuras
+		-Figuras e tabelas
+	-Dar quebra de página antes de algumas tabelas:
+		-Tabela 4.1 
+		-Tabela 4.2 ; Gráfico 4.2 ; Tabela 4.3 ; Gráfico 4.3; Figura 4.1 ; Figura 4.2; Tabela 5.1 
+		-Figura 5.1; Figura 5.2 ; Tabela 6.2 ; Tabela 6.6; Tabela 7.1 ; Tabela 7.2 ; Tabela 7.3; Tabela 7.4 ; Tabela 7.5 
+		-Tabela 7.6 ; Tabela 7.7 ; Tabela 7.10; Tabela 7.11 ; Tabela 7.12; Tabela 7.13; Tabela 7.14; Tabela 7.15; Tabela 7.17 
+		-Gráfico 7.8 ; Tabela 7.20; Tabela 7.22 ; Tabela 7.23 ; Tabela 7.21 ; Tabela 7.25 ; Tabela 8.2; Gráfico 8.1; Gráfico 8.2 
+		-Tabela 8.4 ; Gráfico 8.3 ; Tabela 9.2; Tabela 9.3 ; Tabela 9.4 ; Tabela 9.5 ; Tabela 10.1 ; Tabela 10.2 
+		-Gráfico 10.2 ; Gráfico 10.3 ; Tabela 10.3; Gráfico 10.4 ; Tabela 10.4 ; Gráfico 10.5; Tabela 10.5 ; Gráfico 10.6 
+		-Gráfico 11.1 ; Tabela 11.2 ; Gráfico 11.2 ; Gráfico 11.4 ; Tabela 11.5 ; Tabela 11.6 ; Gráfico 11.6 ; Tabela 11.8 
+		-Tabela 11.9 ; Tabela 12.2 ; Gráfico 12.1 ; Gráfico 12.3 ; Gráfico 12.4 
+
+
+	*-Uma for simples: se a tabela ou gráfico não estiver na mesma página, dar quebra de página
+		*-Problemas: tabelas muito grandes que não tem como ficar na mesma página
+
+
+
+*-Reduzir gráfico:
+Gráfico 7.2 ; Gráfico 7.3 ; Gráfico 7.4 ; Gráfico 7.5 ; Gráfico 11.2 ; Gráfico 12.1 
