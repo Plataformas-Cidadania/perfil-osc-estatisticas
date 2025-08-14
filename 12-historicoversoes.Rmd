@@ -1,0 +1,10 @@
+# Historico e PDF {#cap-historicoversos}
+
+**Histórico de versões do Livro 'Perfil das OSC no Brasil'**
+
+Como forma de guardar o histórico do trabalho, essa sessão irá mostrar outras versões do livro 'Perfil das OSC':
+
+| Versão | Arquivo |
+|:--------------------:|:------------------------------------------------:|
+| Livro 2016 | [PDF](https://portalantigo.ipea.gov.br/agencia/images/stories/PDFs/livros/livros/180607_livro_perfil_das_organizacoes_da_sociedade_civil_no_brasil.pdf) |
+| Versão Online 2025-05-23 | [PDF](historico/perfil-MOSC_2025-08-14.pdf) |
